@@ -5,12 +5,6 @@ import org.apache.commons.lang.StringUtils;
 
 public class CommentUtils {
 
-
-    /**
-     * 获取注解说明  不写/@desc/@describe/@description
-     * @param comment 所有注释
-     * @return String
-     */
     public static String getCommentDesc(String comment) {
         String[] strings = comment.split("\n");
         if (strings.length == 0) {
@@ -55,20 +49,5 @@ public class CommentUtils {
         String desc = string.substring(descIndex);
         stringBuilder.append(desc);
     }
-
-    /**
-     * dfdfdf
-     * @param args
-     */
-    public static void main(String[] args) {
-
-//        System.out.println(getCommentDesc("/**\n" +
-//                " * @describe pwhxbdk\n" +
-//                " * @author pwhxbdk\n" +
-//                " * @date 2020/4/6\n" +
-//                " */"));
-//        System.out.println(StringUtils.ordinalIndexOf("*@desc fdfdfdfdf","c",1));
-    }
-
 
 }

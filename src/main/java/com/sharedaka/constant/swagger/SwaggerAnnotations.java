@@ -6,4 +6,6 @@ public class SwaggerAnnotations {
 
     public static final String SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME = "io.swagger.annotations.ApiImplicitParam";
 
+    public static final String SWAGGER_API_OPERATION_ANNOTATION_NAME = "io.swagger.annotations.ApiOperation";
+
 }

@@ -5,6 +5,7 @@ import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiNameValuePair;
 import com.sharedaka.entity.annotation.spring.PathVariableEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
+import com.sharedaka.utils.StringUtil;
 
 import static com.sharedaka.constant.spring.SpringMvcAnnotations.PATH_VARIABLE_ANNOTATION_NAME;
 
@@ -24,13 +25,13 @@ public class PathVariableParser extends AbstractAnnotationParser {
             switch (attribute.getAttributeName()) {
                 case "value": {
                     if (value != null) {
-                        requestHeader.setValue(value.getText());
+                        requestHeader.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
                     }
                     break;
                 }
                 case "name": {
                     if (value != null) {
-                        requestHeader.setName(value.getText());
+                        requestHeader.setName(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
                     }
                     break;
                 }
