@@ -5,6 +5,7 @@ import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiNameValuePair;
 import com.sharedaka.entity.annotation.spring.RequestParamEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
+import com.sharedaka.utils.StringUtil;
 
 /**
  * @author math312
@@ -19,7 +20,7 @@ public class RequestParamParser extends AbstractAnnotationParser {
 
     /**
      * 不想用反射
-     * */
+     */
     @Override
     public Object doParse(PsiAnnotation psiAnnotation) {
         RequestParamEntity requestParam = new RequestParamEntity();
@@ -29,19 +30,19 @@ public class RequestParamParser extends AbstractAnnotationParser {
             switch (attribute.getAttributeName()) {
                 case "value": {
                     if (value != null) {
-                        requestParam.setValue(value.getText());
+                        requestParam.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
                     }
                     break;
                 }
                 case "name": {
                     if (value != null) {
-                        requestParam.setName(value.getText());
+                        requestParam.setName(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
                     }
                     break;
                 }
                 case "defaultValue": {
                     if (value != null) {
-                        requestParam.setDefaultValue(value.getText());
+                        requestParam.setDefaultValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
                     }
                     break;
                 }

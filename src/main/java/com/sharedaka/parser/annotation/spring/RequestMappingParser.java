@@ -34,7 +34,7 @@ public class RequestMappingParser extends AbstractAnnotationParser {
             if (attributeValue != null) {
                 switch (attribute.getAttributeName()) {
                     case "name": {
-                        result.setName(attribute.getValue().getText());
+                        result.setName(StringUtil.removeHeadAndTailQuotationMarks(attribute.getValue().getText()));
                         break;
                     }
                     case "method": {
