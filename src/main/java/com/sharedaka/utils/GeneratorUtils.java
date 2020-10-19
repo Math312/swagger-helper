@@ -235,11 +235,6 @@ public class GeneratorUtils {
         }
     }
 
-    /**
-     * 生成方法注解
-     *
-     * @param psiMethod 类方法元素
-     */
     private void generateMethodAnnotation(PsiMethod psiMethod) {
         SwaggerApiMethodProcessor swaggerApiMethodProcessor = new SwaggerApiMethodProcessor();
         if (swaggerApiMethodProcessor.support(psiMethod)) {

@@ -3,12 +3,12 @@ package com.sharedaka.parser.annotation;
 import com.sharedaka.parser.annotation.spring.*;
 import com.sharedaka.parser.annotation.swagger.ApiImplicitParamParser;
 import com.sharedaka.parser.annotation.swagger.ApiImplicitParamsParser;
+import com.sharedaka.parser.annotation.swagger.ApiOperationParser;
 
 import java.util.HashMap;
 
 import static com.sharedaka.constant.spring.SpringMvcAnnotations.*;
-import static com.sharedaka.constant.swagger.SwaggerAnnotations.SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME;
-import static com.sharedaka.constant.swagger.SwaggerAnnotations.SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME;
+import static com.sharedaka.constant.swagger.SwaggerAnnotations.*;
 
 /**
  * @author math312
@@ -26,6 +26,7 @@ public class AnnotationParserHolder {
         annotationProcessors.put(REQUEST_MAPPING_ANNOTATION_NAME, new RequestMappingParser());
         annotationProcessors.put(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME, new ApiImplicitParamParser());
         annotationProcessors.put(SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME, new ApiImplicitParamsParser());
+        annotationProcessors.put(SWAGGER_API_OPERATION_ANNOTATION_NAME, new ApiOperationParser());
     }
 
     public static AbstractAnnotationParser getAnnotationProcessor(String key) {

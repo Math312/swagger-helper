@@ -6,26 +6,26 @@ import com.sharedaka.constant.HttpMethods;
 import com.sharedaka.entity.annotation.spring.*;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamEntity;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamsEntity;
+import com.sharedaka.entity.annotation.swagger.ApiOperationEntity;
 import com.sharedaka.parser.annotation.AnnotationParserHolder;
 import com.sharedaka.utils.BasicTypeUtil;
 import com.sharedaka.utils.PsiAnnotationUtil;
 import com.sharedaka.utils.PsiElementUtil;
-import com.sharedaka.utils.StringUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.sharedaka.constant.JavaConstants.*;
+import static com.sharedaka.constant.JavaConstants.CLASS_SUFFIX;
+import static com.sharedaka.constant.JavaConstants.FILE_CLASS_NAME;
 import static com.sharedaka.constant.spring.SpringMvcAnnotations.*;
-import static com.sharedaka.constant.swagger.SwaggerAnnotations.SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME;
-import static com.sharedaka.constant.swagger.SwaggerAnnotations.SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME;
+import static com.sharedaka.constant.swagger.SwaggerAnnotations.*;
 
 public class SwaggerApiMethodProcessor implements MethodSupportable {
 
     private final Set<String> interestingAnnotation;
 
-    private final String API_OPERATION_FORMAT = "@ApiOperation(value = \"%s\", notes = \"%s\",httpMethod = \"%s\", response = %s)";
+    private final String API_OPERATION_FORMAT = "@ApiOperation(value = \"%s\", notes = \"%s\",httpMethod = \"%s\", response = %s";
 
     public SwaggerApiMethodProcessor() {
         this.interestingAnnotation = new HashSet<>(5);
@@ -113,33 +113,65 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
     }
 
     private void processApiOperation(PsiElementFactory psiElementFactory, PsiMethod psiMethod) {
+        PsiAnnotation apiOperationExist = psiMethod.getModifierList().findAnnotation(SWAGGER_API_OPERATION_ANNOTATION_NAME);
+        ApiOperationEntity apiOperationEntity = createApiOperation(psiMethod);
+        if (apiOperationExist != null) {
+            ApiOperationEntity apiOperationEntityExisted = (ApiOperationEntity) AnnotationParserHolder.getAnnotationProcessor(SWAGGER_API_OPERATION_ANNOTATION_NAME).parse(apiOperationExist);
+            mergeApiOperation(apiOperationEntityExisted, apiOperationEntity);
+        }
+        String apiOperationAnnotationText = createApiOperationStr(apiOperationEntity);
+        PsiAnnotationUtil.writeAnnotation(psiElementFactory, "ApiOperation", "io.swagger.annotations.ApiOperation", apiOperationAnnotationText, psiMethod);
+    }
+
+    private String createApiOperationStr(ApiOperationEntity apiOperationEntity) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format(API_OPERATION_FORMAT, apiOperationEntity.getValue(), apiOperationEntity.getNotes(), apiOperationEntity.getHttpMethod(), apiOperationEntity.getResponse()));
+        if (apiOperationEntity.getConsumes() != null) {
+            sb.append(String.format(", consumes= \"%s\" ", apiOperationEntity.getConsumes()));
+        }
+        if (apiOperationEntity.getTags() != null) {
+            String[] tags = new String[apiOperationEntity.getTags().length];
+            for (int i = 0; i < tags.length; i++) {
+                tags[i] = "\"" + apiOperationEntity.getTags()[i] + "\"";
+            }
+            sb.append(Arrays.stream(tags).collect(Collectors.joining(",", ",tags = {", "}")));
+        }
+        return sb.toString();
+    }
+
+    private void mergeApiOperation(ApiOperationEntity apiOperationEntityExisted, ApiOperationEntity apiOperationEntity) {
+        if (apiOperationEntityExisted.getConsumes() != null) {
+            apiOperationEntity.setConsumes(apiOperationEntityExisted.getConsumes());
+        }
+        if (apiOperationEntityExisted.getHttpMethod() != null) {
+            apiOperationEntity.setHttpMethod(apiOperationEntityExisted.getHttpMethod());
+        }
+        if (apiOperationEntityExisted.getNotes() != null) {
+            apiOperationEntity.setNotes(apiOperationEntityExisted.getNotes());
+        }
+        if (apiOperationEntityExisted.getValue() != null) {
+            apiOperationEntity.setValue(apiOperationEntityExisted.getValue());
+        }
+        if (apiOperationEntityExisted.getResponse() != null) {
+            apiOperationEntity.setResponse(apiOperationEntityExisted.getResponse());
+        }
+        if (apiOperationEntityExisted.getTags() != null) {
+            apiOperationEntity.setTags(apiOperationEntityExisted.getTags());
+        }
+    }
+
+    // todo 处理泛型类型
+    private ApiOperationEntity createApiOperation(PsiMethod psiMethod) {
+        ApiOperationEntity apiOperationEntity = new ApiOperationEntity();
+        String returnTypeName = psiMethod.getReturnType().getCanonicalText() + ".class";
+        apiOperationEntity.setResponse(returnTypeName);
         PsiAnnotation[] annotations = psiMethod.getModifierList().getAnnotations();
         PsiAnnotation springMvcMappingAnnotation = chooseSpringMvcMappingAnnotation(annotations);
         String httpMethod = getHttpMethod(springMvcMappingAnnotation);
-        PsiAnnotation apiOperationExist = psiMethod.getModifierList().findAnnotation("io.swagger.annotations.ApiOperation");
-        String apiOperationAttrValue = "";
-        String apiOperationAttrNotes = "";
-        if (apiOperationExist != null) {
-            apiOperationAttrValue = PsiAnnotationUtil.getAttributeStringValue(apiOperationExist, "value");
-            if (apiOperationAttrValue == null) {
-                apiOperationAttrValue = "";
-            } else {
-                apiOperationAttrValue = StringUtil.removeHeadAndTailQuotationMarks(apiOperationAttrValue);
-            }
-            apiOperationAttrNotes = PsiAnnotationUtil.getAttributeStringValue(apiOperationExist, "notes");
-            if (apiOperationAttrNotes == null) {
-                apiOperationAttrNotes = "";
-            } else {
-                apiOperationAttrNotes = StringUtil.removeHeadAndTailQuotationMarks(apiOperationAttrNotes);
-            }
-        }
-        PsiType returnType = psiMethod.getReturnType();
-        String returnTypeStr = VOID_CLASS;
-        if (returnType != null) {
-            returnTypeStr = returnType.getCanonicalText() + CLASS_SUFFIX;
-        }
-        String apiOperationAnnotationText = String.format(API_OPERATION_FORMAT, apiOperationAttrValue, apiOperationAttrNotes, httpMethod, returnTypeStr);
-        PsiAnnotationUtil.writeAnnotation(psiElementFactory, "ApiOperation", "io.swagger.annotations.ApiOperation", apiOperationAnnotationText, psiMethod);
+        apiOperationEntity.setHttpMethod(httpMethod);
+        apiOperationEntity.setNotes("");
+        apiOperationEntity.setValue("");
+        return apiOperationEntity;
     }
 
 
