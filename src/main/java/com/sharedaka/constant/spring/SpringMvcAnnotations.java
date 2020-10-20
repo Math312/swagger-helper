@@ -15,4 +15,11 @@ public class SpringMvcAnnotations {
 
     public static final String MULTIPART_FILE_CLASS_NAME = "org.springframework.web.multipart.MultipartFile";
 
+    public static final String CONTROLLER_ANNOTATION_NAME = "org.springframework.stereotype.Controller";
+    public static final String REST_CONTROLLER_ANNOTATION_NAME = "org.springframework.web.bind.annotation.RestController";
+    public static final String SERVICE_ANNOTATION_NAME = "org.springframework.stereotype.Service";
+    public static final String COMPONENT_ANNOTATION_NAME = "org.springframework.stereotype.Component";
+    public static final String REPOSITORY_ANNOTATION_NAME = "org.springframework.stereotype.Repository";
+    public static final String CONFIGURATION_ANNOTATION_NAME = "org.springframework.context.annotation.Configuration";
+
 }

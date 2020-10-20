@@ -1,6 +1,5 @@
 package com.sharedaka.processor.business;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.sharedaka.constant.HttpMethods;
 import com.sharedaka.entity.annotation.spring.*;
@@ -11,6 +10,7 @@ import com.sharedaka.parser.annotation.AnnotationParserHolder;
 import com.sharedaka.utils.BasicTypeUtil;
 import com.sharedaka.utils.PsiAnnotationUtil;
 import com.sharedaka.utils.PsiElementUtil;
+import com.sharedaka.utils.PsiTypeUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
@@ -25,7 +25,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
 
     private final Set<String> interestingAnnotation;
 
-    private final String API_OPERATION_FORMAT = "@ApiOperation(value = \"%s\", notes = \"%s\",httpMethod = \"%s\", response = %s";
+    private final String API_OPERATION_FORMAT = "@ApiOperation(value = \"%s\", notes = \"%s\",httpMethod = \"%s\"";
 
     public SwaggerApiMethodProcessor() {
         this.interestingAnnotation = new HashSet<>(5);
@@ -37,24 +37,28 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
     }
 
     @Override
-    public boolean support(PsiMethod psiMethod) {
-        PsiAnnotation[] annotations = psiMethod.getModifierList().getAnnotations();
-        Set<String> annotationNames = Arrays.stream(annotations).map(PsiAnnotation::getQualifiedName).collect(Collectors.toSet());
-        annotationNames.retainAll(this.interestingAnnotation);
-        if (annotationNames.size() == 1) {
-            PsiAnnotation psiAnnotation = psiMethod.getModifierList().findAnnotation(annotationNames.iterator().next());
-            if (psiAnnotation.hasQualifiedName(REQUEST_MAPPING_ANNOTATION_NAME)) {
-                RequestMappingEntity requestMapping = (RequestMappingEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_MAPPING_ANNOTATION_NAME).parse(psiAnnotation);
-                return Arrays.stream(requestMapping.getMethod()).collect(Collectors.toSet()).size() == 1;
+    public boolean support(PsiClass psiClass, PsiMethod psiMethod) {
+        if (psiClass.getAnnotation(REST_CONTROLLER_ANNOTATION_NAME) != null || psiClass.getAnnotation(CONTROLLER_ANNOTATION_NAME) != null) {
+            PsiAnnotation[] annotations = psiMethod.getModifierList().getAnnotations();
+            Set<String> annotationNames = Arrays.stream(annotations).map(PsiAnnotation::getQualifiedName).collect(Collectors.toSet());
+            annotationNames.retainAll(this.interestingAnnotation);
+            if (annotationNames.size() == 1) {
+                PsiAnnotation psiAnnotation = psiMethod.getModifierList().findAnnotation(annotationNames.iterator().next());
+                if (psiAnnotation.hasQualifiedName(REQUEST_MAPPING_ANNOTATION_NAME)) {
+                    RequestMappingEntity requestMapping = (RequestMappingEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_MAPPING_ANNOTATION_NAME).parse(psiAnnotation);
+                    return Arrays.stream(requestMapping.getMethod()).collect(Collectors.toSet()).size() == 1;
+                }
+            } else {
+                return false;
             }
+            return true;
         } else {
             return false;
         }
-        return true;
     }
 
-    public void process(Project project, PsiMethod psiMethod) {
-        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
+    public void process(PsiMethod psiMethod) {
+        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(psiMethod.getProject());
         processApiOperation(elementFactory, psiMethod);
         processApiImplicitParams(elementFactory, psiMethod);
     }
@@ -125,7 +129,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
 
     private String createApiOperationStr(ApiOperationEntity apiOperationEntity) {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format(API_OPERATION_FORMAT, apiOperationEntity.getValue(), apiOperationEntity.getNotes(), apiOperationEntity.getHttpMethod(), apiOperationEntity.getResponse()));
+        sb.append(String.format(API_OPERATION_FORMAT, apiOperationEntity.getValue(), apiOperationEntity.getNotes(), apiOperationEntity.getHttpMethod()));
         if (apiOperationEntity.getConsumes() != null) {
             sb.append(String.format(", consumes= \"%s\" ", apiOperationEntity.getConsumes()));
         }
@@ -233,7 +237,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
         Map<String, ApiImplicitParamEntity> apiImplicitParamEntityMap = new LinkedHashMap<>();
         for (PsiParameter psiParameter : psiParameters) {
             PsiType psiType = psiParameter.getType();
-            String dataTypeClass = psiType.getCanonicalText() + CLASS_SUFFIX;
+            String dataTypeClass = PsiTypeUtil.getReturnType(psiType) + CLASS_SUFFIX;
             String dataType = getDataTypeByPsiType(psiType);
             String name = psiParameter.getName();
             String paramType = "query";
