@@ -9,6 +9,7 @@ import com.sharedaka.utils.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.sharedaka.constant.swagger.SwaggerAnnotations.SWAGGER_API_OPERATION_ANNOTATION_NAME;
 
@@ -16,7 +17,7 @@ public class ApiOperationParser extends AbstractAnnotationParser {
 
     @Override
     public boolean support(PsiAnnotation psiAnnotation) {
-        return psiAnnotation.hasQualifiedName(SWAGGER_API_OPERATION_ANNOTATION_NAME);
+        return Objects.equals(psiAnnotation.getQualifiedName(), SWAGGER_API_OPERATION_ANNOTATION_NAME);
     }
 
     @Override
@@ -25,7 +26,7 @@ public class ApiOperationParser extends AbstractAnnotationParser {
         Map<String, PsiAnnotationMemberValue> attributeMap = new HashMap<>();
         for (PsiNameValuePair attribute : attributes) {
             if (attribute.getValue() != null) {
-                attributeMap.put(attribute.getAttributeName(), attribute.getValue());
+                attributeMap.put(attribute.getName(), attribute.getValue());
             }
         }
         return mapToAnnotationEntity(attributeMap);

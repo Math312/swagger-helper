@@ -7,6 +7,8 @@ import com.sharedaka.entity.annotation.spring.RequestHeaderEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.utils.StringUtil;
 
+import java.util.Objects;
+
 import static com.sharedaka.constant.spring.SpringMvcAnnotations.REQUEST_HEADER_ANNOTATION_NAME;
 
 /**
@@ -17,7 +19,7 @@ public class RequestHeaderParser extends AbstractAnnotationParser {
     private static final String SWAGGER_REQUEST_HEADER = REQUEST_HEADER_ANNOTATION_NAME;
 
     public boolean support(PsiAnnotation swaggerRequestHeader) {
-        return swaggerRequestHeader.hasQualifiedName(SWAGGER_REQUEST_HEADER);
+        return Objects.equals(swaggerRequestHeader.getQualifiedName(), SWAGGER_REQUEST_HEADER);
     }
 
     @Override
@@ -26,7 +28,7 @@ public class RequestHeaderParser extends AbstractAnnotationParser {
         PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
         for (PsiNameValuePair attribute : attributes) {
             PsiAnnotationMemberValue value = attribute.getValue();
-            switch (attribute.getAttributeName()) {
+            switch (Objects.requireNonNull(attribute.getName())) {
                 case "value": {
                     if (value != null) {
                         requestHeader.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));

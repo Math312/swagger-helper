@@ -7,6 +7,8 @@ import com.sharedaka.entity.annotation.spring.RequestMappingEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.utils.StringUtil;
 
+import java.util.Objects;
+
 import static com.sharedaka.constant.spring.SpringMvcAnnotations.REQUEST_MAPPING_ANNOTATION_NAME;
 
 public class RequestMappingParser extends AbstractAnnotationParser {
@@ -22,7 +24,7 @@ public class RequestMappingParser extends AbstractAnnotationParser {
 
     @Override
     public boolean support(PsiAnnotation psiAnnotation) {
-        return psiAnnotation.hasQualifiedName(REQUEST_MAPPING_ANNOTATION_NAME);
+        return REQUEST_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName());
     }
 
     @Override
@@ -32,7 +34,7 @@ public class RequestMappingParser extends AbstractAnnotationParser {
         for (PsiNameValuePair attribute : attributes) {
             PsiAnnotationMemberValue attributeValue = attribute.getValue();
             if (attributeValue != null) {
-                switch (attribute.getAttributeName()) {
+                switch (Objects.requireNonNull(attribute.getName())) {
                     case "name": {
                         result.setName(StringUtil.removeHeadAndTailQuotationMarks(attribute.getValue().getText()));
                         break;

@@ -10,12 +10,13 @@ import com.sharedaka.utils.PsiAnnotationUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ApiModelParser extends AbstractAnnotationParser {
 
     @Override
     public boolean support(PsiAnnotation psiAnnotation) {
-        return psiAnnotation.hasQualifiedName(SwaggerAnnotations.SWAGGER_API_MODEL);
+        return Objects.equals(psiAnnotation.getQualifiedName(), SwaggerAnnotations.SWAGGER_API_MODEL);
     }
 
     @Override
@@ -24,7 +25,7 @@ public class ApiModelParser extends AbstractAnnotationParser {
         Map<String, PsiAnnotationMemberValue> attributeMap = new HashMap<>();
         for (PsiNameValuePair attribute : attributes) {
             if (attribute.getValue() != null) {
-                attributeMap.put(attribute.getAttributeName(), attribute.getValue());
+                attributeMap.put(attribute.getName(), attribute.getValue());
             }
         }
         return mapToAnnotationEntity(attributeMap);

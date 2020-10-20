@@ -10,6 +10,8 @@ import com.sharedaka.parser.annotation.AnnotationParserHolder;
 import com.sharedaka.processor.annotation.swagger.ApiModelProcessor;
 import com.sharedaka.processor.annotation.swagger.ApiModelPropertyProcessor;
 import com.sharedaka.utils.PsiAnnotationUtil;
+import com.sharedaka.utils.PsiClassUtil;
+import com.sharedaka.utils.PsiElementUtil;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -32,7 +34,7 @@ public class SwaggerApiModelProcessor implements ClassSupportable {
     }
 
     private void processApiModel(PsiElementFactory elementFactory, PsiClass psiClass) {
-        PsiAnnotation existedApiModel = psiClass.getAnnotation(SwaggerAnnotations.SWAGGER_API_MODEL);
+        PsiAnnotation existedApiModel = PsiElementUtil.getAnnotation(psiClass, SwaggerAnnotations.SWAGGER_API_MODEL);
         ApiModelEntity apiModel = ApiModelProcessor.createByPsiClass(psiClass);
         if (existedApiModel != null) {
             ApiModelEntity existedApiModelEntity = (ApiModelEntity) AnnotationParserHolder.getAnnotationProcessor(SwaggerAnnotations.SWAGGER_API_MODEL).parse(existedApiModel);
@@ -44,7 +46,7 @@ public class SwaggerApiModelProcessor implements ClassSupportable {
     private void processApiModelProperty(PsiElementFactory elementFactory, PsiClass psiClass) {
         PsiField[] psiFields = psiClass.getFields();
         for (PsiField psiField : psiFields) {
-            PsiAnnotation apiModelPropertyAnnotation = psiField.getAnnotation(SwaggerAnnotations.SWAGGER_API_MODEL_PROPERTY);
+            PsiAnnotation apiModelPropertyAnnotation = PsiElementUtil.getAnnotation(psiField, SwaggerAnnotations.SWAGGER_API_MODEL_PROPERTY);
             ApiModelPropertyEntity apiModelProperty = ApiModelPropertyProcessor.createByPsiField(psiField);
             if (apiModelPropertyAnnotation != null) {
                 ApiModelPropertyEntity existedApiModelProperty = (ApiModelPropertyEntity) AnnotationParserHolder.getAnnotationProcessor(SwaggerAnnotations.SWAGGER_API_MODEL_PROPERTY).parse(apiModelPropertyAnnotation);

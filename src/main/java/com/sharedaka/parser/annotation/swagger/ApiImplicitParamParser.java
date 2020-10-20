@@ -16,7 +16,7 @@ public class ApiImplicitParamParser extends AbstractAnnotationParser {
 
     @Override
     public boolean support(PsiAnnotation psiAnnotation) {
-        return psiAnnotation.hasQualifiedName(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME);
+        return SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName());
     }
 
     @Override
@@ -25,7 +25,7 @@ public class ApiImplicitParamParser extends AbstractAnnotationParser {
         Map<String, PsiAnnotationMemberValue> attributeMap = new HashMap<>();
         for (PsiNameValuePair attribute : attributes) {
             if (attribute.getValue() != null) {
-                attributeMap.put(attribute.getAttributeName(), attribute.getValue());
+                attributeMap.put(attribute.getName(), attribute.getValue());
             }
         }
         return mapToAnnotationEntity(attributeMap);

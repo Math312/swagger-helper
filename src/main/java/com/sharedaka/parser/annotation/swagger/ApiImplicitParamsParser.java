@@ -11,6 +11,7 @@ import com.sharedaka.parser.annotation.AnnotationParserHolder;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.sharedaka.constant.swagger.SwaggerAnnotations.SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME;
@@ -20,7 +21,7 @@ public class ApiImplicitParamsParser extends AbstractAnnotationParser {
 
     @Override
     public boolean support(PsiAnnotation psiAnnotation) {
-        return psiAnnotation.hasQualifiedName(SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME);
+        return SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName());
     }
 
     @Override
@@ -29,7 +30,7 @@ public class ApiImplicitParamsParser extends AbstractAnnotationParser {
         PsiAnnotationMemberValue apiImplicitParams = psiAnnotation.findAttributeValue("value");
         if (apiImplicitParams != null) {
             List<PsiElement> apiImplicitParamList = Arrays.stream(apiImplicitParams.getChildren())
-                    .filter((apiImplicitParam) -> apiImplicitParam instanceof PsiAnnotation && ((PsiAnnotation) apiImplicitParam).hasQualifiedName(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME))
+                    .filter((apiImplicitParam) -> apiImplicitParam instanceof PsiAnnotation && Objects.equals(((PsiAnnotation) apiImplicitParam).getQualifiedName(), SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME))
                     .collect(Collectors.toList());
             ApiImplicitParamParser apiImplicitParamParser = (ApiImplicitParamParser) AnnotationParserHolder.getAnnotationProcessor(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME);
             List<ApiImplicitParamEntity> apiImplicitParamEntities = new LinkedList<>();

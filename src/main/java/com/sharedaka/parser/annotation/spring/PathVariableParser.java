@@ -7,13 +7,15 @@ import com.sharedaka.entity.annotation.spring.PathVariableEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.utils.StringUtil;
 
+import java.util.Objects;
+
 import static com.sharedaka.constant.spring.SpringMvcAnnotations.PATH_VARIABLE_ANNOTATION_NAME;
 
 public class PathVariableParser extends AbstractAnnotationParser {
 
     @Override
     public boolean support(PsiAnnotation psiAnnotation) {
-        return psiAnnotation.hasQualifiedName(PATH_VARIABLE_ANNOTATION_NAME);
+        return PATH_VARIABLE_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName());
     }
 
     @Override
@@ -22,7 +24,7 @@ public class PathVariableParser extends AbstractAnnotationParser {
         PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
         for (PsiNameValuePair attribute : attributes) {
             PsiAnnotationMemberValue value = attribute.getValue();
-            switch (attribute.getAttributeName()) {
+            switch (Objects.requireNonNull(attribute.getName())) {
                 case "value": {
                     if (value != null) {
                         requestHeader.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
