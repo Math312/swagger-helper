@@ -1,9 +1,9 @@
 <idea-plugin>
     <id>com.sharedaka.idea.swagger-helper</id>
     <name>swagger-helper</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="yanlishao336@gmail">Sharedaka</vendor>
 
-    <description>the hez</description>
+    <description>generate code -> generate swagger annotation</description>
     <version>0.0.1</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
