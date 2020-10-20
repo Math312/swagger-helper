@@ -3,7 +3,7 @@
     <name>swagger-helper</name>
     <vendor email="yanlishao336@gmail">Sharedaka</vendor>
 
-    <description>generate code -> generate swagger annotation</description>
+    <description>选中类名或方法名 -> generate code -> generate swagger annotation</description>
     <version>0.0.1</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
