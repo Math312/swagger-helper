@@ -17,10 +17,7 @@ public class PsiElementUtil {
             return;
         }
         PsiClass[] psiClasses = PsiShortNamesCache.getInstance(project).getClassesByName(className, GlobalSearchScope.allScope(project));
-        // 待导入类有多个同名类或没有时 让用户自行处理
-        if (psiClasses.length != 1) {
-            return;
-        }
+        // todo 导入类类名重复问题
         PsiClass waiteImportClass = psiClasses[0];
         for (PsiImportStatementBase is : importList.getAllImportStatements()) {
             String impQualifiedName = is.getImportReference().getQualifiedName();
