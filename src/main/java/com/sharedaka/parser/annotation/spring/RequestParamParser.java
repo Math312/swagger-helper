@@ -7,6 +7,8 @@ import com.sharedaka.entity.annotation.spring.RequestParamEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.utils.StringUtil;
 
+import java.util.Objects;
+
 /**
  * @author math312
  */
@@ -15,7 +17,7 @@ public class RequestParamParser extends AbstractAnnotationParser {
     private static final String SWAGGER_REQUEST_PARAM = "org.springframework.web.bind.annotation.RequestParam";
 
     public boolean support(PsiAnnotation swaggerRequestHeader) {
-        return swaggerRequestHeader.hasQualifiedName(SWAGGER_REQUEST_PARAM);
+        return SWAGGER_REQUEST_PARAM.equals(swaggerRequestHeader.getQualifiedName());
     }
 
     /**
@@ -27,7 +29,7 @@ public class RequestParamParser extends AbstractAnnotationParser {
         PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
         for (PsiNameValuePair attribute : attributes) {
             PsiAnnotationMemberValue value = attribute.getValue();
-            switch (attribute.getAttributeName()) {
+            switch (Objects.requireNonNull(attribute.getName())) {
                 case "value": {
                     if (value != null) {
                         requestParam.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));

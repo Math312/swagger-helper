@@ -15,7 +15,7 @@ public class RequestBodyParser extends AbstractAnnotationParser {
 
     @Override
     public boolean support(PsiAnnotation psiAnnotation) {
-        return psiAnnotation.hasQualifiedName(SWAGGER_REQUEST_BODY);
+        return SWAGGER_REQUEST_BODY.equals(psiAnnotation.getQualifiedName());
     }
 
     @Override
@@ -24,7 +24,7 @@ public class RequestBodyParser extends AbstractAnnotationParser {
         PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
         for (PsiNameValuePair attribute : attributes) {
             PsiAnnotationMemberValue value = attribute.getValue();
-            if ("required".equals(attribute.getAttributeName())) {
+            if ("required".equals(attribute.getName())) {
                 if (value != null) {
                     requestBody.setRequired(Boolean.parseBoolean(value.getText()));
                 }

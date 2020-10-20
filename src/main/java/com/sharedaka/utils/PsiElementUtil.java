@@ -5,6 +5,10 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class PsiElementUtil {
 
     public static void importPackage(PsiElementFactory elementFactory, PsiFile file, Project project, String className) {
@@ -28,4 +32,11 @@ public class PsiElementUtil {
         }
         importList.add(elementFactory.createImportStatement(waiteImportClass));
     }
+
+    public static PsiAnnotation getAnnotation(PsiModifierListOwner psiClass, String annotationName) {
+        Map<String,PsiAnnotation> psiAnnotationMap = Arrays.stream(psiClass.getAnnotations()).collect(Collectors.toMap(PsiAnnotation::getQualifiedName,(psiAnnotation)-> psiAnnotation));
+        return psiAnnotationMap.get(annotationName);
+    }
+
+
 }

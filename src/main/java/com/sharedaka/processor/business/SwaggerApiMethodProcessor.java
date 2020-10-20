@@ -38,13 +38,13 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
 
     @Override
     public boolean support(PsiClass psiClass, PsiMethod psiMethod) {
-        if (psiClass.getAnnotation(REST_CONTROLLER_ANNOTATION_NAME) != null || psiClass.getAnnotation(CONTROLLER_ANNOTATION_NAME) != null) {
+        if (PsiElementUtil.getAnnotation(psiClass, REST_CONTROLLER_ANNOTATION_NAME) != null || PsiElementUtil.getAnnotation(psiClass, CONTROLLER_ANNOTATION_NAME) != null) {
             PsiAnnotation[] annotations = psiMethod.getModifierList().getAnnotations();
             Set<String> annotationNames = Arrays.stream(annotations).map(PsiAnnotation::getQualifiedName).collect(Collectors.toSet());
             annotationNames.retainAll(this.interestingAnnotation);
             if (annotationNames.size() == 1) {
                 PsiAnnotation psiAnnotation = psiMethod.getModifierList().findAnnotation(annotationNames.iterator().next());
-                if (psiAnnotation.hasQualifiedName(REQUEST_MAPPING_ANNOTATION_NAME)) {
+                if (REQUEST_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
                     RequestMappingEntity requestMapping = (RequestMappingEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_MAPPING_ANNOTATION_NAME).parse(psiAnnotation);
                     return Arrays.stream(requestMapping.getMethod()).collect(Collectors.toSet()).size() == 1;
                 }
@@ -181,11 +181,11 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
 
     private PsiAnnotation chooseSpringMvcMappingAnnotation(PsiAnnotation[] psiAnnotations) {
         for (PsiAnnotation psiAnnotation : psiAnnotations) {
-            if (psiAnnotation.hasQualifiedName(DELETE_MAPPING_ANNOTATION_NAME) ||
-                    psiAnnotation.hasQualifiedName(GET_MAPPING_ANNOTATION_NAME) ||
-                    psiAnnotation.hasQualifiedName(PUT_MAPPING_ANNOTATION_NAME) ||
-                    psiAnnotation.hasQualifiedName(POST_MAPPING_ANNOTATION_NAME) ||
-                    psiAnnotation.hasQualifiedName(REQUEST_MAPPING_ANNOTATION_NAME)) {
+            if (DELETE_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName()) ||
+                    GET_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName()) ||
+                    PUT_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName()) ||
+                    POST_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName()) ||
+                    REQUEST_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
                 return psiAnnotation;
             }
         }
@@ -193,19 +193,19 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
     }
 
     private String getHttpMethod(PsiAnnotation psiAnnotation) {
-        if (psiAnnotation.hasQualifiedName(DELETE_MAPPING_ANNOTATION_NAME)) {
+        if (DELETE_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
             return HttpMethods.DELETE;
         }
-        if (psiAnnotation.hasQualifiedName(GET_MAPPING_ANNOTATION_NAME)) {
+        if (GET_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
             return HttpMethods.GET;
         }
-        if (psiAnnotation.hasQualifiedName(PUT_MAPPING_ANNOTATION_NAME)) {
+        if (PUT_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
             return HttpMethods.PUT;
         }
-        if (psiAnnotation.hasQualifiedName(POST_MAPPING_ANNOTATION_NAME)) {
+        if (POST_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
             return HttpMethods.POST;
         }
-        if (psiAnnotation.hasQualifiedName(REQUEST_MAPPING_ANNOTATION_NAME)) {
+        if (REQUEST_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
             RequestMappingEntity requestMapping = (RequestMappingEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_MAPPING_ANNOTATION_NAME).parse(psiAnnotation);
             if (requestMapping.getMethod().length == 0) {
                 return HttpMethods.GET;
