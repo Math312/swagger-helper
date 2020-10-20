@@ -9,7 +9,7 @@ public class StringUtil {
         if (source.length() == 0) {
             return source;
         }
-        return source.replaceAll("\\s", "");
+        return source.replaceAll("\\s+", "");
     }
 
     public static String removeHeadAndTailQuotationMarks(String source) {
