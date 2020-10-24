@@ -7,8 +7,6 @@ import com.sharedaka.entity.annotation.spring.RequestParamEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.utils.StringUtil;
 
-import java.util.Objects;
-
 /**
  * @author math312
  */
@@ -29,32 +27,40 @@ public class RequestParamParser extends AbstractAnnotationParser {
         PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
         for (PsiNameValuePair attribute : attributes) {
             PsiAnnotationMemberValue value = attribute.getValue();
-            switch (Objects.requireNonNull(attribute.getName())) {
-                case "value": {
-                    if (value != null) {
-                        requestParam.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
-                    }
-                    break;
+            String name = attribute.getName();
+            if (name == null) {
+                if (value != null) {
+                    requestParam.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
                 }
-                case "name": {
-                    if (value != null) {
-                        requestParam.setName(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
+            } else {
+                switch (name) {
+                    case "value": {
+                        if (value != null) {
+                            requestParam.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
+                        }
+                        break;
                     }
-                    break;
-                }
-                case "defaultValue": {
-                    if (value != null) {
-                        requestParam.setDefaultValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
+                    case "name": {
+                        if (value != null) {
+                            requestParam.setName(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
+                        }
+                        break;
                     }
-                    break;
-                }
-                case "required": {
-                    if (value != null) {
-                        requestParam.setRequired(Boolean.parseBoolean(value.getText()));
+                    case "defaultValue": {
+                        if (value != null) {
+                            requestParam.setDefaultValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
+                        }
+                        break;
                     }
-                    break;
+                    case "required": {
+                        if (value != null) {
+                            requestParam.setRequired(Boolean.parseBoolean(value.getText()));
+                        }
+                        break;
+                    }
                 }
             }
+
         }
         return requestParam;
     }

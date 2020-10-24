@@ -38,5 +38,30 @@ public class PsiElementUtil {
         return psiAnnotationMap.get(annotationName);
     }
 
+    public static boolean isPipeline(PsiCallExpression callExpression) {
+        PsiElement[] children = callExpression.getChildren();
+        for (PsiElement child : children) {
+            for (PsiElement psiElement : child.getChildren()) {
+                if (psiElement instanceof PsiMethodCallExpression) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isComplexCall(PsiCallExpression callExpression) {
+        PsiExpressionList argumentList = callExpression.getArgumentList();
+        if (argumentList != null) {
+            PsiExpression[] expressions = argumentList.getExpressions();
+            for (PsiExpression expression : expressions) {
+                if (expression instanceof PsiCallExpression) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
 }

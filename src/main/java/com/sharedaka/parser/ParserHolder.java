@@ -1,7 +1,9 @@
-package com.sharedaka.parser.annotation;
+package com.sharedaka.parser;
 
+import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.parser.annotation.spring.*;
 import com.sharedaka.parser.annotation.swagger.*;
+import com.sharedaka.parser.enums.ErrorCodeParser;
 
 import java.util.HashMap;
 
@@ -11,9 +13,11 @@ import static com.sharedaka.constant.swagger.SwaggerAnnotations.*;
 /**
  * @author math312
  */
-public class AnnotationParserHolder {
+public class ParserHolder {
 
     private final static HashMap<String, AbstractAnnotationParser> annotationProcessors;
+
+    private final static ErrorCodeParser errorCodeParser;
 
     static {
         annotationProcessors = new HashMap<>();
@@ -28,10 +32,16 @@ public class AnnotationParserHolder {
         annotationProcessors.put(SWAGGER_API_ANNOTATION_NAME, new ApiParser());
         annotationProcessors.put(SWAGGER_API_MODEL_PROPERTY, new ApiModelPropertyParser());
         annotationProcessors.put(SWAGGER_API_MODEL, new ApiModelParser());
+
+        errorCodeParser = new ErrorCodeParser();
     }
 
     public static AbstractAnnotationParser getAnnotationProcessor(String key) {
         return annotationProcessors.get(key);
+    }
+
+    public static ErrorCodeParser getErrorCodeParser() {
+        return errorCodeParser;
     }
 
 }

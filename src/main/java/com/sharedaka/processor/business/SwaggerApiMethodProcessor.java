@@ -2,11 +2,13 @@ package com.sharedaka.processor.business;
 
 import com.intellij.psi.*;
 import com.sharedaka.constant.HttpMethods;
+import com.sharedaka.entity.ErrorCodeEntity;
 import com.sharedaka.entity.annotation.spring.*;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamEntity;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamsEntity;
 import com.sharedaka.entity.annotation.swagger.ApiOperationEntity;
-import com.sharedaka.parser.annotation.AnnotationParserHolder;
+import com.sharedaka.parser.CodeExceptionParser;
+import com.sharedaka.parser.ParserHolder;
 import com.sharedaka.utils.BasicTypeUtil;
 import com.sharedaka.utils.PsiAnnotationUtil;
 import com.sharedaka.utils.PsiElementUtil;
@@ -27,6 +29,8 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
 
     private final String API_OPERATION_FORMAT = "@ApiOperation(value = \"%s\", notes = \"%s\",httpMethod = \"%s\"";
 
+    private final String API_RESPONSE_FORMAT = "@ApiResponse(code = %d, message = \"%s\")";
+
     public SwaggerApiMethodProcessor() {
         this.interestingAnnotation = new HashSet<>(5);
         this.interestingAnnotation.add(DELETE_MAPPING_ANNOTATION_NAME);
@@ -45,7 +49,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
             if (annotationNames.size() == 1) {
                 PsiAnnotation psiAnnotation = psiMethod.getModifierList().findAnnotation(annotationNames.iterator().next());
                 if (REQUEST_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
-                    RequestMappingEntity requestMapping = (RequestMappingEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_MAPPING_ANNOTATION_NAME).parse(psiAnnotation);
+                    RequestMappingEntity requestMapping = (RequestMappingEntity) ParserHolder.getAnnotationProcessor(REQUEST_MAPPING_ANNOTATION_NAME).parse(psiAnnotation);
                     return Arrays.stream(requestMapping.getMethod()).collect(Collectors.toSet()).size() == 1;
                 }
             } else {
@@ -61,6 +65,26 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
         PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(psiMethod.getProject());
         processApiOperation(elementFactory, psiMethod);
         processApiImplicitParams(elementFactory, psiMethod);
+        processApiResponses(elementFactory, psiMethod);
+    }
+
+    private void processApiResponses(PsiElementFactory elementFactory, PsiMethod psiMethod) {
+        CodeExceptionParser codeExceptionParser = new CodeExceptionParser();
+        Map<String, ErrorCodeEntity> result = codeExceptionParser.generate(psiMethod);
+        writeApiResponseToFile(result, elementFactory, psiMethod);
+        PsiElementUtil.importPackage(elementFactory, psiMethod.getContainingFile(), psiMethod.getProject(), "ApiResponse");
+    }
+
+    private void writeApiResponseToFile(Map<String, ErrorCodeEntity> errorCodeEntityMap, PsiElementFactory psiElementFactory, PsiMethod psiMethod) {
+        List<String> apiResponseList = new LinkedList<>();
+        for (Map.Entry<String, ErrorCodeEntity> entityEntry : errorCodeEntityMap.entrySet()) {
+            apiResponseList.add(String.format(API_RESPONSE_FORMAT, entityEntry.getValue().getCode(), entityEntry.getValue().getMessage()));
+        }
+        String apiResponses = "@ApiResponses({})";
+        if (apiResponseList.size() > 0) {
+            apiResponses = apiResponseList.stream().collect(Collectors.joining(",\n", "@ApiResponses({\n", "\n})"));
+        }
+        PsiAnnotationUtil.writeAnnotation(psiElementFactory, "ApiResponses", "io.swagger.annotations.ApiResponses", apiResponses, psiMethod);
     }
 
     private void processApiImplicitParams(PsiElementFactory psiElementFactory, PsiMethod psiMethod) {
@@ -98,13 +122,13 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
     private Map<String, ApiImplicitParamEntity> readAlreadyExistsAnnotation(PsiAnnotation apiImplicitParams, PsiAnnotation apiImplicitParam) {
         Map<String, ApiImplicitParamEntity> result = new HashMap<>();
         if (apiImplicitParam != null) {
-            ApiImplicitParamEntity apiImplicitParamEntity = (ApiImplicitParamEntity) AnnotationParserHolder.getAnnotationProcessor(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME).parse(apiImplicitParam);
+            ApiImplicitParamEntity apiImplicitParamEntity = (ApiImplicitParamEntity) ParserHolder.getAnnotationProcessor(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME).parse(apiImplicitParam);
             if (apiImplicitParamEntity.getName() != null) {
                 result.put(apiImplicitParamEntity.getName(), apiImplicitParamEntity);
             }
         }
         if (apiImplicitParams != null) {
-            ApiImplicitParamsEntity apiImplicitParamsEntity = (ApiImplicitParamsEntity) AnnotationParserHolder.getAnnotationProcessor(SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME).parse(apiImplicitParams);
+            ApiImplicitParamsEntity apiImplicitParamsEntity = (ApiImplicitParamsEntity) ParserHolder.getAnnotationProcessor(SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME).parse(apiImplicitParams);
             if (apiImplicitParamsEntity.getValue() != null) {
                 for (ApiImplicitParamEntity apiImplicitParamEntity : apiImplicitParamsEntity.getValue()) {
                     if (apiImplicitParamEntity.getName() != null) {
@@ -120,7 +144,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
         PsiAnnotation apiOperationExist = psiMethod.getModifierList().findAnnotation(SWAGGER_API_OPERATION_ANNOTATION_NAME);
         ApiOperationEntity apiOperationEntity = createApiOperation(psiMethod);
         if (apiOperationExist != null) {
-            ApiOperationEntity apiOperationEntityExisted = (ApiOperationEntity) AnnotationParserHolder.getAnnotationProcessor(SWAGGER_API_OPERATION_ANNOTATION_NAME).parse(apiOperationExist);
+            ApiOperationEntity apiOperationEntityExisted = (ApiOperationEntity) ParserHolder.getAnnotationProcessor(SWAGGER_API_OPERATION_ANNOTATION_NAME).parse(apiOperationExist);
             mergeApiOperation(apiOperationEntityExisted, apiOperationEntity);
         }
         String apiOperationAnnotationText = createApiOperationStr(apiOperationEntity);
@@ -206,7 +230,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
             return HttpMethods.POST;
         }
         if (REQUEST_MAPPING_ANNOTATION_NAME.equals(psiAnnotation.getQualifiedName())) {
-            RequestMappingEntity requestMapping = (RequestMappingEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_MAPPING_ANNOTATION_NAME).parse(psiAnnotation);
+            RequestMappingEntity requestMapping = (RequestMappingEntity) ParserHolder.getAnnotationProcessor(REQUEST_MAPPING_ANNOTATION_NAME).parse(psiAnnotation);
             if (requestMapping.getMethod().length == 0) {
                 return HttpMethods.GET;
             } else {
@@ -229,17 +253,21 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
         if (dataType != null) {
             return dataType;
         } else {
-            return "object";
+            return psiType.getPresentableText();
         }
     }
 
+    // 需要重构
     private Map<String, ApiImplicitParamEntity> processMethodParam(PsiParameter[] psiParameters) {
         Map<String, ApiImplicitParamEntity> apiImplicitParamEntityMap = new LinkedHashMap<>();
         for (PsiParameter psiParameter : psiParameters) {
             PsiType psiType = psiParameter.getType();
             String dataTypeClass = PsiTypeUtil.getReturnType(psiType) + CLASS_SUFFIX;
             String dataType = getDataTypeByPsiType(psiType);
-            String name = psiParameter.getName();
+            String name = "";
+            if (psiType.getPresentableText().equals("HttpServletRequest")) {
+                continue;
+            }
             String paramType = "query";
             String defaultValue = null;
             String value = "";
@@ -254,7 +282,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
                 switch (psiAnnotation.getQualifiedName()) {
                     case REQUEST_HEADER_ANNOTATION_NAME:
                         paramType = "header";
-                        RequestHeaderEntity requestHeader = (RequestHeaderEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_HEADER_ANNOTATION_NAME).parse(psiAnnotation);
+                        RequestHeaderEntity requestHeader = (RequestHeaderEntity) ParserHolder.getAnnotationProcessor(REQUEST_HEADER_ANNOTATION_NAME).parse(psiAnnotation);
                         if (null != requestHeader.getRequired()) {
                             required = requestHeader.getRequired();
                         }
@@ -268,12 +296,12 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
                         break;
                     case REQUEST_PARAM_ANNOTATION_NAME:
                         paramType = "query";
-                        RequestParamEntity requestParam = (RequestParamEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_PARAM_ANNOTATION_NAME).parse(psiAnnotation);
+                        RequestParamEntity requestParam = (RequestParamEntity) ParserHolder.getAnnotationProcessor(REQUEST_PARAM_ANNOTATION_NAME).parse(psiAnnotation);
                         if (null != requestParam.getRequired()) {
                             required = requestParam.getRequired();
                         }
                         if (null != requestParam.getValue()) {
-                            value = requestParam.getValue();
+                            name = requestParam.getValue();
                         }
                         if (null != requestParam.getName()) {
                             name = requestParam.getName();
@@ -282,7 +310,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
                         break;
                     case PATH_VARIABLE_ANNOTATION_NAME:
                         paramType = "path";
-                        PathVariableEntity pathVariable = (PathVariableEntity) AnnotationParserHolder.getAnnotationProcessor(PATH_VARIABLE_ANNOTATION_NAME).parse(psiAnnotation);
+                        PathVariableEntity pathVariable = (PathVariableEntity) ParserHolder.getAnnotationProcessor(PATH_VARIABLE_ANNOTATION_NAME).parse(psiAnnotation);
                         if (null != pathVariable.getRequired()) {
                             required = pathVariable.getRequired();
                         }
@@ -295,14 +323,18 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
                         break;
                     case REQUEST_BODY_ANNOTATION_NAME:
                         paramType = "body";
-                        RequestBodyEntity requestBody = (RequestBodyEntity) AnnotationParserHolder.getAnnotationProcessor(REQUEST_BODY_ANNOTATION_NAME).parse(psiAnnotation);
+                        RequestBodyEntity requestBody = (RequestBodyEntity) ParserHolder.getAnnotationProcessor(REQUEST_BODY_ANNOTATION_NAME).parse(psiAnnotation);
                         if (null != requestBody.getRequired()) {
                             required = requestBody.getRequired();
                         }
+                        dataType = psiType.getPresentableText();
                         break;
                     default:
                         break;
                 }
+            }
+            if ("query".equals(paramType) && BasicTypeUtil.isBasicType(psiType.getCanonicalText())) {
+                continue;
             }
             ApiImplicitParamEntity apiImplicitParamEntity = new ApiImplicitParamEntity();
             apiImplicitParamEntity.setName(name);

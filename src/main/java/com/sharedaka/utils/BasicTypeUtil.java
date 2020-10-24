@@ -44,4 +44,8 @@ public class BasicTypeUtil {
         return BASIC_TYPE_MAP2.getOrDefault(canonicalName, null);
     }
 
+    public static boolean isBasicType(String classQualifiedName) {
+        return BASIC_TYPE_MAP2.containsKey(classQualifiedName);
+    }
+
 }

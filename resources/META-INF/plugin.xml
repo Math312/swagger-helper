@@ -10,9 +10,13 @@
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
+<!--    <depends>com.intellij.spring</depends>-->
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <applicationConfigurable instance="com.sharedaka.ui.config.SwaggerHelperSetting"/>
+        <applicationService
+                serviceImplementation="com.sharedaka.config.SwaggerHelperConfigHolder"/>
     </extensions>
 
     <actions>

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamEntity;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamsEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
-import com.sharedaka.parser.annotation.AnnotationParserHolder;
+import com.sharedaka.parser.ParserHolder;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -32,7 +32,7 @@ public class ApiImplicitParamsParser extends AbstractAnnotationParser {
             List<PsiElement> apiImplicitParamList = Arrays.stream(apiImplicitParams.getChildren())
                     .filter((apiImplicitParam) -> apiImplicitParam instanceof PsiAnnotation && Objects.equals(((PsiAnnotation) apiImplicitParam).getQualifiedName(), SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME))
                     .collect(Collectors.toList());
-            ApiImplicitParamParser apiImplicitParamParser = (ApiImplicitParamParser) AnnotationParserHolder.getAnnotationProcessor(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME);
+            ApiImplicitParamParser apiImplicitParamParser = (ApiImplicitParamParser) ParserHolder.getAnnotationProcessor(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME);
             List<ApiImplicitParamEntity> apiImplicitParamEntities = new LinkedList<>();
             for (PsiElement psiElement : apiImplicitParamList) {
                 apiImplicitParamEntities.add((ApiImplicitParamEntity) apiImplicitParamParser.doParse((PsiAnnotation) psiElement));

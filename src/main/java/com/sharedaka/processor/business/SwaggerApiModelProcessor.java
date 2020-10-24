@@ -6,11 +6,10 @@ import com.sharedaka.constant.spring.SpringMvcAnnotations;
 import com.sharedaka.constant.swagger.SwaggerAnnotations;
 import com.sharedaka.entity.annotation.swagger.ApiModelEntity;
 import com.sharedaka.entity.annotation.swagger.ApiModelPropertyEntity;
-import com.sharedaka.parser.annotation.AnnotationParserHolder;
+import com.sharedaka.parser.ParserHolder;
 import com.sharedaka.processor.annotation.swagger.ApiModelProcessor;
 import com.sharedaka.processor.annotation.swagger.ApiModelPropertyProcessor;
 import com.sharedaka.utils.PsiAnnotationUtil;
-import com.sharedaka.utils.PsiClassUtil;
 import com.sharedaka.utils.PsiElementUtil;
 
 import java.util.Arrays;
@@ -37,7 +36,7 @@ public class SwaggerApiModelProcessor implements ClassSupportable {
         PsiAnnotation existedApiModel = PsiElementUtil.getAnnotation(psiClass, SwaggerAnnotations.SWAGGER_API_MODEL);
         ApiModelEntity apiModel = ApiModelProcessor.createByPsiClass(psiClass);
         if (existedApiModel != null) {
-            ApiModelEntity existedApiModelEntity = (ApiModelEntity) AnnotationParserHolder.getAnnotationProcessor(SwaggerAnnotations.SWAGGER_API_MODEL).parse(existedApiModel);
+            ApiModelEntity existedApiModelEntity = (ApiModelEntity) ParserHolder.getAnnotationProcessor(SwaggerAnnotations.SWAGGER_API_MODEL).parse(existedApiModel);
             ApiModelProcessor.mergeApiAnnotation(existedApiModelEntity, apiModel);
         }
         PsiAnnotationUtil.writeAnnotation(elementFactory, "ApiModel", SwaggerAnnotations.SWAGGER_API_MODEL, ApiModelProcessor.createAnnotationString(apiModel), psiClass);
@@ -49,7 +48,7 @@ public class SwaggerApiModelProcessor implements ClassSupportable {
             PsiAnnotation apiModelPropertyAnnotation = PsiElementUtil.getAnnotation(psiField, SwaggerAnnotations.SWAGGER_API_MODEL_PROPERTY);
             ApiModelPropertyEntity apiModelProperty = ApiModelPropertyProcessor.createByPsiField(psiField);
             if (apiModelPropertyAnnotation != null) {
-                ApiModelPropertyEntity existedApiModelProperty = (ApiModelPropertyEntity) AnnotationParserHolder.getAnnotationProcessor(SwaggerAnnotations.SWAGGER_API_MODEL_PROPERTY).parse(apiModelPropertyAnnotation);
+                ApiModelPropertyEntity existedApiModelProperty = (ApiModelPropertyEntity) ParserHolder.getAnnotationProcessor(SwaggerAnnotations.SWAGGER_API_MODEL_PROPERTY).parse(apiModelPropertyAnnotation);
                 ApiModelPropertyProcessor.mergeApiAnnotation(existedApiModelProperty, apiModelProperty);
             }
             PsiAnnotationUtil.writeAnnotation(elementFactory, "ApiModelProperty", SwaggerAnnotations.SWAGGER_API_MODEL_PROPERTY, ApiModelPropertyProcessor.createAnnotationString(apiModelProperty), psiField);
