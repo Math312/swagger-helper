@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElementFactory;
 import com.sharedaka.constant.spring.SpringMvcAnnotations;
 import com.sharedaka.constant.swagger.SwaggerAnnotations;
 import com.sharedaka.entity.annotation.swagger.ApiEntity;
-import com.sharedaka.parser.annotation.AnnotationParserHolder;
+import com.sharedaka.parser.ParserHolder;
 import com.sharedaka.processor.annotation.swagger.ApiProcessor;
 import com.sharedaka.utils.PsiAnnotationUtil;
 import com.sharedaka.utils.PsiElementUtil;
@@ -34,7 +34,7 @@ public class SwaggerApiControllerProcessor implements ClassSupportable {
         PsiAnnotation psiAnnotation = PsiElementUtil.getAnnotation(psiClass, SwaggerAnnotations.SWAGGER_API_ANNOTATION_NAME);
         ApiEntity apiAnnotation = ApiProcessor.createByPsiClass(psiClass);
         if (psiAnnotation != null) {
-            ApiEntity existedApiAnnotation = (ApiEntity) AnnotationParserHolder.getAnnotationProcessor(SwaggerAnnotations.SWAGGER_API_ANNOTATION_NAME).parse(psiAnnotation);
+            ApiEntity existedApiAnnotation = (ApiEntity) ParserHolder.getAnnotationProcessor(SwaggerAnnotations.SWAGGER_API_ANNOTATION_NAME).parse(psiAnnotation);
             ApiProcessor.mergeApiAnnotation(existedApiAnnotation, apiAnnotation);
         }
         String apiAnnotationStr = ApiProcessor.createAnnotationString(apiAnnotation);
