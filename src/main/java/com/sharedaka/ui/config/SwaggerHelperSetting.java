@@ -2,7 +2,9 @@ package com.sharedaka.ui.config;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.sharedaka.config.SwaggerHelperConfigHolder;
+import com.intellij.openapi.project.Project;
+import com.sharedaka.config.SwaggerHelperConfig;
+import com.sharedaka.core.SwaggerHelperApplicationManager;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +16,13 @@ import java.util.stream.Collectors;
 public class SwaggerHelperSetting implements SearchableConfigurable {
 
     private SwaggerHelperSettingUI swaggerHelperSettingUI;
-    private static String interestingExceptionStr;
+    private String interestingExceptionStr;
+    private Project project;
+
+    public SwaggerHelperSetting(Project project) {
+        this.project = project;
+        SwaggerHelperApplicationManager.getInstance(project).setSwaggerHelperSetting(this);
+    }
 
     @NotNull
     @Override
@@ -31,30 +39,30 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        if (null == swaggerHelperSettingUI) {
-            this.swaggerHelperSettingUI = new SwaggerHelperSettingUI();
+        if (null == this.swaggerHelperSettingUI) {
+            this.swaggerHelperSettingUI = new SwaggerHelperSettingUI(this.project);
         }
-        return swaggerHelperSettingUI.mainPanel;
+        return this.swaggerHelperSettingUI.mainPanel;
     }
 
     @Override
     public boolean isModified() {
-        String old = SwaggerHelperConfigHolder.interestingException.stream().collect(Collectors.joining(";"));
+        String old = String.join(";", SwaggerHelperConfig.getInstance(project).interestingException);
         return !old.equals(interestingExceptionStr);
     }
 
     @Override
     public void apply() throws ConfigurationException {
         String[] exceptions = interestingExceptionStr.split(";");
-        SwaggerHelperConfigHolder.interestingException.clear();
-        SwaggerHelperConfigHolder.interestingException.addAll(Arrays.asList(exceptions));
+        SwaggerHelperConfig.getInstance(project).interestingException.clear();
+        SwaggerHelperConfig.getInstance(project).interestingException.addAll(Arrays.stream(exceptions).filter((str) -> !"".equals(str)).collect(Collectors.toList()));
     }
 
-    public static String getInterestingExceptionStr() {
+    public String getInterestingExceptionStr() {
         return interestingExceptionStr;
     }
 
-    public static void setInterestingExceptionStr(final String newStr) {
+    public void setInterestingExceptionStr(final String newStr) {
         interestingExceptionStr = newStr;
     }
 }

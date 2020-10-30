@@ -24,24 +24,30 @@ public class PathVariableParser extends AbstractAnnotationParser {
         PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
         for (PsiNameValuePair attribute : attributes) {
             PsiAnnotationMemberValue value = attribute.getValue();
-            switch (Objects.requireNonNull(attribute.getName())) {
-                case "value": {
-                    if (value != null) {
-                        requestHeader.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
-                    }
-                    break;
+            if (attribute.getName() == null || attribute.getName().length() == 0) {
+                if (value != null) {
+                    requestHeader.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
                 }
-                case "name": {
-                    if (value != null) {
-                        requestHeader.setName(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
+            } else {
+                switch (Objects.requireNonNull(attribute.getName())) {
+                    case "value": {
+                        if (value != null) {
+                            requestHeader.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
+                        }
+                        break;
                     }
-                    break;
-                }
-                case "required": {
-                    if (value != null) {
-                        requestHeader.setRequired(Boolean.parseBoolean(value.getText()));
+                    case "name": {
+                        if (value != null) {
+                            requestHeader.setName(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
+                        }
+                        break;
                     }
-                    break;
+                    case "required": {
+                        if (value != null) {
+                            requestHeader.setRequired(Boolean.parseBoolean(value.getText()));
+                        }
+                        break;
+                    }
                 }
             }
         }

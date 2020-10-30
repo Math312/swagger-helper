@@ -1,14 +1,55 @@
 package com.sharedaka.config;
 
-public class SwaggerHelperConfig {
+import com.intellij.openapi.components.*;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.sharedaka.core.SwaggerHelperApplicationManager;
+import com.sharedaka.ui.config.SwaggerHelperSetting;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-    public String interestingExceptions;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-    public String getInterestingExceptions() {
-        return interestingExceptions;
+@Service
+@State(
+        name = "SwaggerHelperSettings",
+        storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
+public class SwaggerHelperConfig implements PersistentStateComponent<SwaggerHelperConfig.SwaggerHelperConfigEntity> {
+
+    private Project project;
+
+    public SwaggerHelperConfig(Project project) {
+        this.project = project;
     }
 
-    public void setInterestingExceptions(String interestingExceptions) {
-        this.interestingExceptions = interestingExceptions;
+    public List<String> interestingException = new LinkedList<>();
+
+    public static SwaggerHelperConfig getInstance(Project project) {
+        return project.getService(SwaggerHelperConfig.class);
+    }
+
+    @Nullable
+    @Override
+    public SwaggerHelperConfigEntity getState() {
+        SwaggerHelperConfigEntity configEntity = new SwaggerHelperConfigEntity();
+        configEntity.interestingExceptions = String.join(";", this.interestingException);
+        return configEntity;
+    }
+
+    @Override
+    public void loadState(@NotNull SwaggerHelperConfigEntity state) {
+        SwaggerHelperConfigEntity entity = new SwaggerHelperConfigEntity();
+        XmlSerializerUtil.copyBean(state, entity);
+        this.interestingException.addAll(Arrays.asList(state.interestingExceptions.split(";")));
+        SwaggerHelperSetting setting = SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting();
+        if (setting != null) {
+            setting.setInterestingExceptionStr(state.interestingExceptions);
+        }
+    }
+
+    public static class SwaggerHelperConfigEntity {
+        public String interestingExceptions;
     }
 }

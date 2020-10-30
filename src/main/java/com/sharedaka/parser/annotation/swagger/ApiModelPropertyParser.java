@@ -25,7 +25,12 @@ public class ApiModelPropertyParser extends AbstractAnnotationParser {
         Map<String, PsiAnnotationMemberValue> attributeMap = new HashMap<>();
         for (PsiNameValuePair attribute : attributes) {
             if (attribute.getValue() != null) {
-                attributeMap.put(attribute.getName(), attribute.getValue());
+                if (attribute.getName() == null || attribute.getName().length() == 0) {
+                    attributeMap.put("value", attribute.getValue());
+                } else {
+                    attributeMap.put(attribute.getName(), attribute.getValue());
+                }
+
             }
         }
         return mapToAnnotationEntity(attributeMap);
