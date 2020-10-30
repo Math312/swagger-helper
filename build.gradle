@@ -19,6 +19,10 @@ intellij {
     version 'IU-2020.1.2'
     plugins = ['java','com.intellij.spring']
 }
+
+runIde {
+    jvmArgs '-Xmx2G'
+}
 patchPluginXml {
     changeNotes """
       Add change notes here.<br>

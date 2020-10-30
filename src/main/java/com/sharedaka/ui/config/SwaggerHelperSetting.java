@@ -3,6 +3,9 @@ package com.sharedaka.ui.config;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.spring.model.utils.SpringModelUtils;
 import com.sharedaka.config.SwaggerHelperConfig;
 import com.sharedaka.core.SwaggerHelperApplicationManager;
 import org.jetbrains.annotations.Nls;
@@ -17,6 +20,7 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
 
     private SwaggerHelperSettingUI swaggerHelperSettingUI;
     private String interestingExceptionStr;
+    private String springRootConfigurationClassName;
     private Project project;
 
     public SwaggerHelperSetting(Project project) {
@@ -56,6 +60,8 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
         String[] exceptions = interestingExceptionStr.split(";");
         SwaggerHelperConfig.getInstance(project).interestingException.clear();
         SwaggerHelperConfig.getInstance(project).interestingException.addAll(Arrays.stream(exceptions).filter((str) -> !"".equals(str)).collect(Collectors.toList()));
+        SwaggerHelperConfig.getInstance(project).springRootConfigurationClassName = this.springRootConfigurationClassName;
+        SwaggerHelperApplicationManager.getInstance(project).setCommonSpringModel(SpringModelUtils.getInstance().getSpringModel(JavaPsiFacade.getInstance(project).findClass(springRootConfigurationClassName, GlobalSearchScope.projectScope(project))));
     }
 
     public String getInterestingExceptionStr() {
@@ -64,5 +70,13 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
 
     public void setInterestingExceptionStr(final String newStr) {
         interestingExceptionStr = newStr;
+    }
+
+    public String getSpringRootConfigurationClassName() {
+        return springRootConfigurationClassName;
+    }
+
+    public void setSpringRootConfigurationClassName(String springRootConfigurationClassName) {
+        this.springRootConfigurationClassName = springRootConfigurationClassName;
     }
 }
