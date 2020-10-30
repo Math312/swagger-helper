@@ -1,43 +1,48 @@
 package com.sharedaka.ui.config;
 
+import com.intellij.openapi.project.Project;
+import com.sharedaka.config.SwaggerHelperConfig;
+import com.sharedaka.core.SwaggerHelperApplicationManager;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class SwaggerHelperSettingUI {
     public JPanel mainPanel;
     private JTextField textField1;
-    private JButton checkButton;
+    private Project project;
 
-
-    public SwaggerHelperSettingUI() {
+    public SwaggerHelperSettingUI(Project project) {
+        this.project = project;
         Document document = textField1.getDocument();
-        textField1.setText(SwaggerHelperSetting.getInterestingExceptionStr());
+        initParam(project);
         document.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                SwaggerHelperSetting.setInterestingExceptionStr(textField1.getText());
+                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setInterestingExceptionStr(textField1.getText());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                SwaggerHelperSetting.setInterestingExceptionStr(textField1.getText());
+                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setInterestingExceptionStr(textField1.getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                SwaggerHelperSetting.setInterestingExceptionStr(textField1.getText());
+                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setInterestingExceptionStr(textField1.getText());
             }
         });
-        checkButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+    }
 
-            }
-        });
+    public void initParam(Project project) {
+        SwaggerHelperSetting setting = SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting();
+        if (setting.getInterestingExceptionStr() == null || setting.getInterestingExceptionStr().length() == 0) {
+            SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(this.project);
+            setting.setInterestingExceptionStr(String.join(";", config.interestingException));
+        }
+        textField1.setText(setting.getInterestingExceptionStr());
     }
 
 }

@@ -264,7 +264,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
             PsiType psiType = psiParameter.getType();
             String dataTypeClass = PsiTypeUtil.getReturnType(psiType) + CLASS_SUFFIX;
             String dataType = getDataTypeByPsiType(psiType);
-            String name = "";
+            String name = psiParameter.getName();
             if (psiType.getPresentableText().equals("HttpServletRequest")) {
                 continue;
             }
@@ -333,7 +333,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
                         break;
                 }
             }
-            if ("query".equals(paramType) && BasicTypeUtil.isBasicType(psiType.getCanonicalText())) {
+            if ("query".equals(paramType) && !BasicTypeUtil.isBasicType(psiType.getCanonicalText())) {
                 continue;
             }
             ApiImplicitParamEntity apiImplicitParamEntity = new ApiImplicitParamEntity();

@@ -4,7 +4,7 @@
     <vendor email="yanlishao336@gmail">Sharedaka</vendor>
 
     <description>选中类名或方法名 -> generate code -> generate swagger annotation</description>
-    <version>0.0.1</version>
+    <version>0.0.4</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
@@ -14,9 +14,11 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationConfigurable instance="com.sharedaka.ui.config.SwaggerHelperSetting"/>
-        <applicationService
-                serviceImplementation="com.sharedaka.config.SwaggerHelperConfigHolder"/>
+        <projectConfigurable instance="com.sharedaka.ui.config.SwaggerHelperSetting"/>
+        <projectService
+                serviceImplementation="com.sharedaka.config.SwaggerHelperConfig"/>
+        <projectService
+                serviceImplementation="com.sharedaka.core.SwaggerHelperApplicationManager"/>
     </extensions>
 
     <actions>

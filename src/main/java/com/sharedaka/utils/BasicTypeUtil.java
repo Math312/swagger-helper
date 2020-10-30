@@ -29,6 +29,7 @@ public class BasicTypeUtil {
         BASIC_TYPE_MAP2.put("java.lang.Short", "short");
         BASIC_TYPE_MAP2.put("java.lang.Boolean", "boolean");
         BASIC_TYPE_MAP2.put("java.lang.String", "string");
+        BASIC_TYPE_MAP2.put("java.util.Date", "date-time");
         BASIC_TYPE_MAP2.put("byte", "byte");
         BASIC_TYPE_MAP2.put("char", "char");
         BASIC_TYPE_MAP2.put("double", "double");

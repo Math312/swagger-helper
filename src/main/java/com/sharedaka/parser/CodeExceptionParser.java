@@ -1,9 +1,10 @@
 package com.sharedaka.parser;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.sharedaka.config.SwaggerHelperConfigHolder;
+import com.sharedaka.config.SwaggerHelperConfig;
 import com.sharedaka.entity.ErrorCodeEntity;
 import com.sharedaka.entity.ErrorCodes;
 import com.sharedaka.utils.BasicTypeUtil;
@@ -21,8 +22,8 @@ public class CodeExceptionParser extends ExceptionElementParser {
     }
 
     @Override
-    public boolean interestingException(PsiType exceptionType) {
-        for (String interestingException : SwaggerHelperConfigHolder.interestingException) {
+    public boolean interestingException(Project project, PsiType exceptionType) {
+        for (String interestingException : SwaggerHelperConfig.getInstance(project).interestingException) {
             if (exceptionType.getCanonicalText().equals(interestingException)) {
                 return true;
             }

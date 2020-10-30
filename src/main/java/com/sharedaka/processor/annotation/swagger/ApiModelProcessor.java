@@ -26,7 +26,7 @@ public class ApiModelProcessor {
             apiModel.setDescription("");
         }
 
-        apiModel.setValue(psiClass.getQualifiedName());
+        apiModel.setValue(psiClass.getName());
         return apiModel;
     }
 

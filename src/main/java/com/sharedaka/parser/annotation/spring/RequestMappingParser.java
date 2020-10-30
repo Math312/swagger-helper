@@ -34,27 +34,31 @@ public class RequestMappingParser extends AbstractAnnotationParser {
         for (PsiNameValuePair attribute : attributes) {
             PsiAnnotationMemberValue attributeValue = attribute.getValue();
             if (attributeValue != null) {
-                switch (Objects.requireNonNull(attribute.getName())) {
-                    case "name": {
-                        result.setName(StringUtil.removeHeadAndTailQuotationMarks(attribute.getValue().getText()));
-                        break;
+                if (attribute.getName() == null || attribute.getName().length() == 0) {
+                    String paths = StringUtil.removeSpace(attribute.getText());
+                    result.setValue(parsePathAttribute(paths));
+                } else {
+                    switch (Objects.requireNonNull(attribute.getName())) {
+                        case "name": {
+                            result.setName(StringUtil.removeHeadAndTailQuotationMarks(attribute.getValue().getText()));
+                            break;
+                        }
+                        case "method": {
+                            String httpMethods = StringUtil.removeSpace(attributeValue.getText());
+                            result.setMethod(parseMethodAttribute(httpMethods));
+                            break;
+                        }
+                        case "value": {
+                            String paths = StringUtil.removeSpace(attribute.getText());
+                            result.setValue(parsePathAttribute(paths));
+                            break;
+                        }
+                        case "path": {
+                            String paths = StringUtil.removeSpace(attribute.getText());
+                            result.setPath(parsePathAttribute(paths));
+                            break;
+                        }
                     }
-                    case "method": {
-                        String httpMethods = StringUtil.removeSpace(attributeValue.getText());
-                        result.setMethod(parseMethodAttribute(httpMethods));
-                        break;
-                    }
-                    case "value": {
-                        String paths = StringUtil.removeSpace(attribute.getText());
-                        result.setValue(parsePathAttribute(paths));
-                        break;
-                    }
-                    case "path": {
-                        String paths = StringUtil.removeSpace(attribute.getText());
-                        result.setPath(parsePathAttribute(paths));
-                        break;
-                    }
-
                 }
             }
         }
