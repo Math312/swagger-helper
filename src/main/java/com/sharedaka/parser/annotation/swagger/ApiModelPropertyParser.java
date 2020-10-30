@@ -20,23 +20,7 @@ public class ApiModelPropertyParser extends AbstractAnnotationParser {
     }
 
     @Override
-    protected Object doParse(PsiAnnotation psiAnnotation) {
-        PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
-        Map<String, PsiAnnotationMemberValue> attributeMap = new HashMap<>();
-        for (PsiNameValuePair attribute : attributes) {
-            if (attribute.getValue() != null) {
-                if (attribute.getName() == null || attribute.getName().length() == 0) {
-                    attributeMap.put("value", attribute.getValue());
-                } else {
-                    attributeMap.put(attribute.getName(), attribute.getValue());
-                }
-
-            }
-        }
-        return mapToAnnotationEntity(attributeMap);
-    }
-
-    private Object mapToAnnotationEntity(Map<String, PsiAnnotationMemberValue> attributeMap) {
+    public Object mapToAnnotationEntity(Map<String, PsiAnnotationMemberValue> attributeMap) {
         ApiModelPropertyEntity apiModelProperty = new ApiModelPropertyEntity();
         apiModelProperty.setValue(PsiAnnotationUtil.parseStringAttribute(attributeMap.get("value")));
         apiModelProperty.setName(PsiAnnotationUtil.parseStringAttribute(attributeMap.get("name")));

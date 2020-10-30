@@ -2,10 +2,11 @@ package com.sharedaka.parser.annotation.spring;
 
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiNameValuePair;
 import com.sharedaka.entity.annotation.spring.RequestParamEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
-import com.sharedaka.utils.StringUtil;
+import com.sharedaka.utils.PsiAnnotationUtil;
+
+import java.util.Map;
 
 /**
  * @author math312
@@ -18,50 +19,13 @@ public class RequestParamParser extends AbstractAnnotationParser {
         return SWAGGER_REQUEST_PARAM.equals(swaggerRequestHeader.getQualifiedName());
     }
 
-    /**
-     * 不想用反射
-     */
     @Override
-    public Object doParse(PsiAnnotation psiAnnotation) {
+    protected Object mapToAnnotationEntity(Map<String, PsiAnnotationMemberValue> attributeMap) {
         RequestParamEntity requestParam = new RequestParamEntity();
-        PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
-        for (PsiNameValuePair attribute : attributes) {
-            PsiAnnotationMemberValue value = attribute.getValue();
-            String name = attribute.getName();
-            if (name == null) {
-                if (value != null) {
-                    requestParam.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
-                }
-            } else {
-                switch (name) {
-                    case "value": {
-                        if (value != null) {
-                            requestParam.setValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
-                        }
-                        break;
-                    }
-                    case "name": {
-                        if (value != null) {
-                            requestParam.setName(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
-                        }
-                        break;
-                    }
-                    case "defaultValue": {
-                        if (value != null) {
-                            requestParam.setDefaultValue(StringUtil.removeHeadAndTailQuotationMarks(value.getText()));
-                        }
-                        break;
-                    }
-                    case "required": {
-                        if (value != null) {
-                            requestParam.setRequired(Boolean.parseBoolean(value.getText()));
-                        }
-                        break;
-                    }
-                }
-            }
-
-        }
+        requestParam.setName(PsiAnnotationUtil.parseStringAttribute(attributeMap.get("name")));
+        requestParam.setValue(PsiAnnotationUtil.parseStringAttribute(attributeMap.get("value")));
+        requestParam.setDefaultValue(PsiAnnotationUtil.parseStringAttribute(attributeMap.get("defaultValue")));
+        requestParam.setRequired(PsiAnnotationUtil.parseBooleanAttribute(attributeMap.get("required")));
         return requestParam;
     }
 }

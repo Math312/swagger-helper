@@ -2,12 +2,12 @@ package com.sharedaka.parser.annotation.spring;
 
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiNameValuePair;
 import com.sharedaka.entity.annotation.spring.RequestMappingEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
+import com.sharedaka.utils.PsiAnnotationUtil;
 import com.sharedaka.utils.StringUtil;
 
-import java.util.Objects;
+import java.util.Map;
 
 import static com.sharedaka.constant.spring.SpringMvcAnnotations.REQUEST_MAPPING_ANNOTATION_NAME;
 
@@ -28,39 +28,20 @@ public class RequestMappingParser extends AbstractAnnotationParser {
     }
 
     @Override
-    public Object doParse(PsiAnnotation psiAnnotation) {
+    protected Object mapToAnnotationEntity(Map<String, PsiAnnotationMemberValue> attributeMap) {
         RequestMappingEntity result = new RequestMappingEntity();
-        PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
-        for (PsiNameValuePair attribute : attributes) {
-            PsiAnnotationMemberValue attributeValue = attribute.getValue();
-            if (attributeValue != null) {
-                if (attribute.getName() == null || attribute.getName().length() == 0) {
-                    String paths = StringUtil.removeSpace(attribute.getText());
-                    result.setValue(parsePathAttribute(paths));
-                } else {
-                    switch (Objects.requireNonNull(attribute.getName())) {
-                        case "name": {
-                            result.setName(StringUtil.removeHeadAndTailQuotationMarks(attribute.getValue().getText()));
-                            break;
-                        }
-                        case "method": {
-                            String httpMethods = StringUtil.removeSpace(attributeValue.getText());
-                            result.setMethod(parseMethodAttribute(httpMethods));
-                            break;
-                        }
-                        case "value": {
-                            String paths = StringUtil.removeSpace(attribute.getText());
-                            result.setValue(parsePathAttribute(paths));
-                            break;
-                        }
-                        case "path": {
-                            String paths = StringUtil.removeSpace(attribute.getText());
-                            result.setPath(parsePathAttribute(paths));
-                            break;
-                        }
-                    }
-                }
-            }
+        result.setName(PsiAnnotationUtil.parseStringAttribute(attributeMap.get("name")));
+        if (attributeMap.containsKey("value")) {
+            String paths = StringUtil.removeSpace(attributeMap.get("value").getText());
+            result.setValue(parsePathAttribute(paths));
+        }
+        if (attributeMap.containsKey("path")) {
+            String paths = StringUtil.removeSpace(attributeMap.get("path").getText());
+            result.setValue(parsePathAttribute(paths));
+        }
+        if (attributeMap.containsKey("method")) {
+            String paths = StringUtil.removeSpace(attributeMap.get("method").getText());
+            result.setValue(parseMethodAttribute(paths));
         }
         return result;
     }
