@@ -2,12 +2,10 @@ package com.sharedaka.parser.annotation.swagger;
 
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiNameValuePair;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.utils.StringUtil;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.sharedaka.constant.swagger.SwaggerAnnotations.SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME;
@@ -20,22 +18,7 @@ public class ApiImplicitParamParser extends AbstractAnnotationParser {
     }
 
     @Override
-    public Object doParse(PsiAnnotation psiAnnotation) {
-        PsiNameValuePair[] attributes = psiAnnotation.getParameterList().getAttributes();
-        Map<String, PsiAnnotationMemberValue> attributeMap = new HashMap<>();
-        for (PsiNameValuePair attribute : attributes) {
-            if (attribute.getValue() != null) {
-                if (attribute.getName() == null || attribute.getName().length() == 0) {
-                    attributeMap.put("value", attribute.getValue());
-                } else {
-                    attributeMap.put(attribute.getName(), attribute.getValue());
-                }
-            }
-        }
-        return mapToAnnotationEntity(attributeMap);
-    }
-
-    private ApiImplicitParamEntity mapToAnnotationEntity(Map<String, PsiAnnotationMemberValue> attributeMap) {
+    protected ApiImplicitParamEntity mapToAnnotationEntity(Map<String, PsiAnnotationMemberValue> attributeMap) {
         ApiImplicitParamEntity apiImplicitParamEntity = new ApiImplicitParamEntity();
         if (attributeMap.containsKey("name")) {
             apiImplicitParamEntity.setName(StringUtil.removeHeadAndTailQuotationMarks(attributeMap.get("name").getText()));

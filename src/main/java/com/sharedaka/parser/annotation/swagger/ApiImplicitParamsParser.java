@@ -5,13 +5,10 @@ import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiElement;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamEntity;
 import com.sharedaka.entity.annotation.swagger.ApiImplicitParamsEntity;
-import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.parser.ParserHolder;
+import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.sharedaka.constant.swagger.SwaggerAnnotations.SWAGGER_IMPLICIT_PARAMS_ANNOTATION_NAME;
@@ -41,4 +38,5 @@ public class ApiImplicitParamsParser extends AbstractAnnotationParser {
         }
         return apiImplicitParamsEntity;
     }
+
 }
