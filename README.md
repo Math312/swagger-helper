@@ -73,6 +73,13 @@
         ```
        此时如果Swagger-Helper检测到上面的异常抛出语句，会生成@ApiResponse(code=0,message="Successfully")注解。
        
+       事实上，Swagger-Helper检测到Exception的构造参数中，只要有符合上述ErrorCode特征注解，就会自动扫描，因此，如果上面的异常抛出语句是如下形式，也是没有问题的：
+       
+       ```java
+       throw new BusinessException(ErrorCode.SUCCESSFUL, "Message");
+       throw new BusinessException(ErrorCode.SUCCESSFUL, 1.0);
+       ```
+       
         对于抛出的Exception，可在Preferences->Swagger-Helper配置项中进行配置。
         
         注意，目前该功能还不支持Spring的Bean注入。该功能会在0.0.5版本支持。
