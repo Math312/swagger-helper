@@ -20,6 +20,10 @@ intellij {
     plugins = ['java','com.intellij.spring']
 }
 
+runPluginVerifier {
+    ideVersions = ["IC-2019.3.5"]
+}
+
 runIde {
     jvmArgs '-Xmx2G'
 }

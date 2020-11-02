@@ -51,8 +51,30 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
 
     @Override
     public boolean isModified() {
-        String old = String.join(";", SwaggerHelperConfig.getInstance(project).interestingException);
+        return checkInterestingExceptions() || checkSpringRootConfigurationClassName();
+    }
+
+    private boolean checkInterestingExceptions() {
+        if (interestingExceptionStr == null) {
+            return true;
+        }
+        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
+        if (config.interestingException == null) {
+            return true;
+        }
+        String old = String.join(";", config.interestingException);
         return !old.equals(interestingExceptionStr);
+    }
+
+    private boolean checkSpringRootConfigurationClassName() {
+        if (springRootConfigurationClassName == null) {
+            return true;
+        }
+        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
+        if (config.springRootConfigurationClassName == null) {
+            return true;
+        }
+        return !config.springRootConfigurationClassName.equals(springRootConfigurationClassName);
     }
 
     @Override
