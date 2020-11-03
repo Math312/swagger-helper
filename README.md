@@ -80,7 +80,11 @@
        throw new BusinessException(ErrorCode.SUCCESSFUL, 1.0);
        ```
        
-        对于抛出的Exception，可在Preferences->Swagger-Helper配置项中进行配置。
+        对于抛出的Exception，可在Preferences-> Other settings ->Swagger-Helper配置项中进行配置。
+        
+        ![](./doc/images/config1.png)
+        
+        如有多个Exception需要检测，请以`分号`分隔
         
         注意，目前该功能还不支持Spring的Bean注入。该功能会在0.0.5版本支持。
         
