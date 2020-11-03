@@ -29,6 +29,6 @@ public class RequestHeaderParser extends AbstractAnnotationParser {
         requestHeader.setName(PsiAnnotationUtil.parseStringAttribute(attributeMap.get("name")));
         requestHeader.setDefaultValue(PsiAnnotationUtil.parseStringAttribute(attributeMap.get("defaultValue")));
         requestHeader.setRequired(PsiAnnotationUtil.parseBooleanAttribute(attributeMap.get("required")));
-        return super.mapToAnnotationEntity(attributeMap);
+        return requestHeader;
     }
 }

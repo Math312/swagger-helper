@@ -26,7 +26,7 @@ public class BasicTypeUtil {
         BASIC_TYPE_MAP2.put("java.lang.Float", "float");
         BASIC_TYPE_MAP2.put("java.lang.Integer", "int");
         BASIC_TYPE_MAP2.put("java.lang.Long", "long");
-        BASIC_TYPE_MAP2.put("java.lang.Short", "short");
+        BASIC_TYPE_MAP2.put("java.lang.Short", "integer");
         BASIC_TYPE_MAP2.put("java.lang.Boolean", "boolean");
         BASIC_TYPE_MAP2.put("java.lang.String", "string");
         BASIC_TYPE_MAP2.put("java.util.Date", "date-time");
@@ -36,7 +36,7 @@ public class BasicTypeUtil {
         BASIC_TYPE_MAP2.put("float", "float");
         BASIC_TYPE_MAP2.put("int", "int");
         BASIC_TYPE_MAP2.put("long", "long");
-        BASIC_TYPE_MAP2.put("short", "short");
+        BASIC_TYPE_MAP2.put("short", "integer");
         BASIC_TYPE_MAP2.put("boolean", "boolean");
         BASIC_TYPE_MAP2.put("string", "string");
     }
