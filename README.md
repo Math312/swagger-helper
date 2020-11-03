@@ -82,7 +82,7 @@
        
         对于抛出的Exception，可在Preferences-> Other settings ->Swagger-Helper配置项中进行配置。
         
-        ![](./doc/images/config1.png)
+        ![](https://github.com/Math312/swagger-helper/blob/master/doc/images/config1.png)
         
         如有多个Exception需要检测，请以`分号`分隔
         
