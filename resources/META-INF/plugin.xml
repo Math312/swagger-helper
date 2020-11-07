@@ -2,7 +2,7 @@
     <id>com.sharedaka.idea.swagger-helper</id>
     <name>swagger-helper</name>
     <vendor email="yanlishao336@gmail">Sharedaka</vendor>
-
+    <idea-version since-build="193"/>
     <description>
         <![CDATA[
         <strong>该插件提供功能如下：</strong><br />
@@ -18,7 +18,7 @@
         <br />
 
         具体使用方法，请查看 <a href="https://github.com/Math312/swagger-helper">Github主页</a>]]></description>
-    <version>0.0.4</version>
+    <version>0.4.3</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->

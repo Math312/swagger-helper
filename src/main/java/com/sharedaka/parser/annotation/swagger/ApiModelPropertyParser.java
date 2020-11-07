@@ -2,13 +2,11 @@ package com.sharedaka.parser.annotation.swagger;
 
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiNameValuePair;
 import com.sharedaka.constant.swagger.SwaggerAnnotations;
 import com.sharedaka.entity.annotation.swagger.ApiModelPropertyEntity;
 import com.sharedaka.parser.annotation.AbstractAnnotationParser;
 import com.sharedaka.utils.PsiAnnotationUtil;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 

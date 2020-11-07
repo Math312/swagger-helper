@@ -4,5 +4,4 @@ build
 .gradle
 *.iml
 *.jar
-.idea
 out

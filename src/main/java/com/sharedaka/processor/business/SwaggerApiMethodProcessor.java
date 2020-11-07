@@ -1,5 +1,6 @@
 package com.sharedaka.processor.business;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.sharedaka.constant.HttpMethods;
 import com.sharedaka.entity.ErrorCodeEntity;
@@ -92,7 +93,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
         PsiAnnotation apiImplicitParam = psiMethod.getModifierList().findAnnotation(SWAGGER_IMPLICIT_PARAM_ANNOTATION_NAME);
         Map<String, ApiImplicitParamEntity> existedApiImplicitParams = readAlreadyExistsAnnotation(apiImplicitParams, apiImplicitParam);
         PsiParameter[] psiParameters = psiMethod.getParameterList().getParameters();
-        Map<String, ApiImplicitParamEntity> generatedImplicitParams = processMethodParam(psiParameters);
+        Map<String, ApiImplicitParamEntity> generatedImplicitParams = processMethodParam(psiMethod.getProject(), psiParameters);
         mergeImplicitParams(existedApiImplicitParams, generatedImplicitParams);
         writeApiImplicitParamsToFile(generatedImplicitParams, psiElementFactory, psiMethod);
         PsiElementUtil.importPackage(psiElementFactory, psiMethod.getContainingFile(), psiMethod.getProject(), "ApiImplicitParam");
@@ -258,7 +259,7 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
     }
 
     // 需要重构
-    private Map<String, ApiImplicitParamEntity> processMethodParam(PsiParameter[] psiParameters) {
+    private Map<String, ApiImplicitParamEntity> processMethodParam(Project project, PsiParameter[] psiParameters) {
         Map<String, ApiImplicitParamEntity> apiImplicitParamEntityMap = new LinkedHashMap<>();
         for (PsiParameter psiParameter : psiParameters) {
             PsiType psiType = psiParameter.getType();
@@ -333,8 +334,13 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
                         break;
                 }
             }
-            if ("query".equals(paramType) && !BasicTypeUtil.isBasicType(psiType.getCanonicalText())) {
-                continue;
+            PsiClass paramClass = PsiTypeUtil.getPsiClass(project, psiType);
+            if ("query".equals(paramType) && paramClass != null && paramClass.isEnum()) {
+                dataType = "string";
+            } else {
+                if ("query".equals(paramType) && !BasicTypeUtil.isBasicType(psiType.getCanonicalText())) {
+                    continue;
+                }
             }
             ApiImplicitParamEntity apiImplicitParamEntity = new ApiImplicitParamEntity();
             apiImplicitParamEntity.setName(name);
