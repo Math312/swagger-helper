@@ -1,8 +1,11 @@
 package com.sharedaka.core;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.spring.CommonSpringModel;
-import com.intellij.spring.contexts.model.SpringModel;
+import com.intellij.spring.model.utils.SpringModelUtils;
+import com.sharedaka.config.SwaggerHelperConfig;
 import com.sharedaka.ui.config.SwaggerHelperSetting;
 
 public class SwaggerHelperApplicationManager {
@@ -30,6 +33,14 @@ public class SwaggerHelperApplicationManager {
     }
 
     public CommonSpringModel getCommonSpringModel() {
+        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
+        if (commonSpringModel == null) {
+            synchronized (this) {
+                if (commonSpringModel == null) {
+                    this.commonSpringModel = SpringModelUtils.getInstance().getSpringModel(JavaPsiFacade.getInstance(project).findClass(config.springRootConfigurationClassName, GlobalSearchScope.projectScope(project)));
+                }
+            }
+        }
         return commonSpringModel;
     }
 

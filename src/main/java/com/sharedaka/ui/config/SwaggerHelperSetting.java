@@ -30,6 +30,10 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
         this.springRootConfigurationClassName = config.springRootConfigurationClassName;
     }
 
+    public static SwaggerHelperSetting getInstance(Project project) {
+        return project.getComponent(SwaggerHelperSetting.class);
+    }
+
     @NotNull
     @Override
     public String getId() {

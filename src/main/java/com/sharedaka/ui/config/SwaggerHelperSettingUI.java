@@ -55,9 +55,9 @@ public class SwaggerHelperSettingUI {
     }
 
     public void initParam(Project project) {
-        SwaggerHelperSetting setting = SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting();
-        textField1.setText(setting.getInterestingExceptionStr());
-        textField2.setText(setting.getSpringRootConfigurationClassName());
+        SwaggerHelperConfig setting = SwaggerHelperConfig.getInstance(project);
+        textField1.setText(String.join(";", setting.interestingException));
+        textField2.setText(setting.springRootConfigurationClassName);
     }
 
 }

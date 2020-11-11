@@ -19,9 +19,6 @@ public class CodeExceptionParser extends ExceptionElementParser {
     Map<String, ErrorCodeEntity> result = new HashMap<>();
 
     public Map<String, ErrorCodeEntity> generate(PsiMethod psiMethod) {
-        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(psiMethod.getProject());
-        Project project = psiMethod.getProject();
-        SwaggerHelperApplicationManager.getInstance(project).setCommonSpringModel(SpringModelUtils.getInstance().getSpringModel(JavaPsiFacade.getInstance(project).findClass(config.springRootConfigurationClassName, GlobalSearchScope.projectScope(project))));
         psiMethod.accept(this);
         return result;
     }
