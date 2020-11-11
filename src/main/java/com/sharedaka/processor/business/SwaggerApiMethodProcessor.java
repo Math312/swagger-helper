@@ -334,9 +334,8 @@ public class SwaggerApiMethodProcessor implements MethodSupportable {
                         break;
                 }
             }
-
-            PsiClass psiClass = PsiTypeUtil.getPsiClass(project,psiType);
-            if ("query".equals(paramType) && psiClass != null && psiClass.isEnum()) {
+            PsiClass paramClass = PsiTypeUtil.getPsiClass(project, psiType);
+            if ("query".equals(paramType) && paramClass != null && paramClass.isEnum()) {
                 dataType = "string";
             } else {
                 if ("query".equals(paramType) && !BasicTypeUtil.isBasicType(psiType.getCanonicalText())) {

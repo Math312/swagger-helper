@@ -34,7 +34,7 @@ public class PsiElementUtil {
     }
 
     public static PsiAnnotation getAnnotation(PsiModifierListOwner psiClass, String annotationName) {
-        Map<String,PsiAnnotation> psiAnnotationMap = Arrays.stream(psiClass.getAnnotations()).collect(Collectors.toMap(PsiAnnotation::getQualifiedName,(psiAnnotation)-> psiAnnotation));
+        Map<String, PsiAnnotation> psiAnnotationMap = Arrays.stream(psiClass.getAnnotations()).collect(Collectors.toMap(PsiAnnotation::getQualifiedName, (psiAnnotation) -> psiAnnotation));
         return psiAnnotationMap.get(annotationName);
     }
 
@@ -61,6 +61,10 @@ public class PsiElementUtil {
             }
         }
         return false;
+    }
+
+    public static boolean isAbstractMethod(PsiMethod psiMethod) {
+        return (psiMethod.getContainingClass() != null && psiMethod.getContainingClass().isInterface()) || psiMethod.getModifierList().hasModifierProperty(PsiModifier.ABSTRACT);
     }
 
 
