@@ -25,7 +25,9 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
 
     public SwaggerHelperSetting(Project project) {
         this.project = project;
-        SwaggerHelperApplicationManager.getInstance(project).setSwaggerHelperSetting(this);
+        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
+        this.interestingExceptionStr = String.join(";", config.interestingException);
+        this.springRootConfigurationClassName = config.springRootConfigurationClassName;
     }
 
     @NotNull

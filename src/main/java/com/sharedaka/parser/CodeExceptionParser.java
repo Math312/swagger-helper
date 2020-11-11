@@ -4,7 +4,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.spring.model.utils.SpringModelUtils;
 import com.sharedaka.config.SwaggerHelperConfig;
+import com.sharedaka.core.SwaggerHelperApplicationManager;
 import com.sharedaka.entity.ErrorCodeEntity;
 import com.sharedaka.entity.ErrorCodes;
 import com.sharedaka.utils.BasicTypeUtil;
@@ -17,6 +19,9 @@ public class CodeExceptionParser extends ExceptionElementParser {
     Map<String, ErrorCodeEntity> result = new HashMap<>();
 
     public Map<String, ErrorCodeEntity> generate(PsiMethod psiMethod) {
+        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(psiMethod.getProject());
+        Project project = psiMethod.getProject();
+        SwaggerHelperApplicationManager.getInstance(project).setCommonSpringModel(SpringModelUtils.getInstance().getSpringModel(JavaPsiFacade.getInstance(project).findClass(config.springRootConfigurationClassName, GlobalSearchScope.projectScope(project))));
         psiMethod.accept(this);
         return result;
     }

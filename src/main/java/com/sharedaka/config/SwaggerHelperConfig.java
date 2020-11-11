@@ -50,14 +50,6 @@ public class SwaggerHelperConfig implements PersistentStateComponent<SwaggerHelp
         XmlSerializerUtil.copyBean(state, entity);
         this.interestingException.addAll(Arrays.asList(state.interestingExceptions.split(";")));
         this.springRootConfigurationClassName = state.springConfigurationClass;
-        SwaggerHelperSetting setting = SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting();
-        if (state.springConfigurationClass != null) {
-            SwaggerHelperApplicationManager.getInstance(project).setCommonSpringModel(SpringModelUtils.getInstance().getSpringModel(JavaPsiFacade.getInstance(project).findClass(springRootConfigurationClassName, GlobalSearchScope.projectScope(project))));
-        }
-        if (setting != null) {
-            setting.setInterestingExceptionStr(state.interestingExceptions);
-            setting.setSpringRootConfigurationClassName(state.springConfigurationClass);
-        }
     }
 
     public static class SwaggerHelperConfigEntity {

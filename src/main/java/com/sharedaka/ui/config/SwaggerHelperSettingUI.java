@@ -56,14 +56,6 @@ public class SwaggerHelperSettingUI {
 
     public void initParam(Project project) {
         SwaggerHelperSetting setting = SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting();
-        if (setting.getInterestingExceptionStr() == null || setting.getInterestingExceptionStr().length() == 0) {
-            SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(this.project);
-            setting.setInterestingExceptionStr(String.join(";", config.interestingException));
-        }
-        if (setting.getSpringRootConfigurationClassName() == null || setting.getSpringRootConfigurationClassName().length() == 0) {
-            SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(this.project);
-            setting.setSpringRootConfigurationClassName(config.springRootConfigurationClassName);
-        }
         textField1.setText(setting.getInterestingExceptionStr());
         textField2.setText(setting.getSpringRootConfigurationClassName());
     }
