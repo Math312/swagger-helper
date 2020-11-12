@@ -36,7 +36,7 @@ public class SwaggerHelperApplicationManager {
         SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
         if (commonSpringModel == null) {
             synchronized (this) {
-                if (commonSpringModel == null) {
+                if (commonSpringModel == null && config != null && config.springRootConfigurationClassName != null && !config.springRootConfigurationClassName.equals("")) {
                     this.commonSpringModel = SpringModelUtils.getInstance().getSpringModel(JavaPsiFacade.getInstance(project).findClass(config.springRootConfigurationClassName, GlobalSearchScope.projectScope(project)));
                 }
             }

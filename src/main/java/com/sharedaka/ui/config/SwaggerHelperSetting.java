@@ -19,15 +19,10 @@ import java.util.stream.Collectors;
 public class SwaggerHelperSetting implements SearchableConfigurable {
 
     private SwaggerHelperSettingUI swaggerHelperSettingUI;
-    private String interestingExceptionStr;
-    private String springRootConfigurationClassName;
     private Project project;
 
     public SwaggerHelperSetting(Project project) {
         this.project = project;
-        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
-        this.interestingExceptionStr = String.join(";", config.interestingException);
-        this.springRootConfigurationClassName = config.springRootConfigurationClassName;
     }
 
     public static SwaggerHelperSetting getInstance(Project project) {
@@ -57,54 +52,33 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
 
     @Override
     public boolean isModified() {
-        return checkInterestingExceptions() || checkSpringRootConfigurationClassName();
+        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
+        String interestingExceptionStr = String.join(";", config.interestingException);
+        String springRootConfigurationClassName = config.springRootConfigurationClassName;
+        return checkInterestingExceptions(interestingExceptionStr)
+                || checkSpringRootConfigurationClassName(springRootConfigurationClassName);
     }
 
-    private boolean checkInterestingExceptions() {
+    private boolean checkInterestingExceptions(String interestingExceptionStr) {
         if (interestingExceptionStr == null) {
             return true;
         }
-        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
-        if (config.interestingException == null) {
-            return true;
-        }
-        String old = String.join(";", config.interestingException);
-        return !old.equals(interestingExceptionStr);
+        return !swaggerHelperSettingUI.textField1.getText().equals(interestingExceptionStr);
     }
 
-    private boolean checkSpringRootConfigurationClassName() {
+    private boolean checkSpringRootConfigurationClassName(String springRootConfigurationClassName) {
         if (springRootConfigurationClassName == null) {
             return true;
         }
-        SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
-        if (config.springRootConfigurationClassName == null) {
-            return true;
-        }
-        return !config.springRootConfigurationClassName.equals(springRootConfigurationClassName);
+        return !swaggerHelperSettingUI.textField2.getText().equals(springRootConfigurationClassName);
     }
 
     @Override
     public void apply() throws ConfigurationException {
-        String[] exceptions = interestingExceptionStr.split(";");
+        String[] exceptions = swaggerHelperSettingUI.textField1.getText().split(";");
         SwaggerHelperConfig.getInstance(project).interestingException.clear();
         SwaggerHelperConfig.getInstance(project).interestingException.addAll(Arrays.stream(exceptions).filter((str) -> !"".equals(str)).collect(Collectors.toList()));
-        SwaggerHelperConfig.getInstance(project).springRootConfigurationClassName = this.springRootConfigurationClassName;
-        SwaggerHelperApplicationManager.getInstance(project).setCommonSpringModel(SpringModelUtils.getInstance().getSpringModel(JavaPsiFacade.getInstance(project).findClass(springRootConfigurationClassName, GlobalSearchScope.projectScope(project))));
-    }
-
-    public String getInterestingExceptionStr() {
-        return interestingExceptionStr;
-    }
-
-    public void setInterestingExceptionStr(final String newStr) {
-        interestingExceptionStr = newStr;
-    }
-
-    public String getSpringRootConfigurationClassName() {
-        return springRootConfigurationClassName;
-    }
-
-    public void setSpringRootConfigurationClassName(String springRootConfigurationClassName) {
-        this.springRootConfigurationClassName = springRootConfigurationClassName;
+        SwaggerHelperConfig.getInstance(project).springRootConfigurationClassName = swaggerHelperSettingUI.textField2.getText();
+        SwaggerHelperApplicationManager.getInstance(project).setCommonSpringModel(SpringModelUtils.getInstance().getSpringModel(JavaPsiFacade.getInstance(project).findClass(swaggerHelperSettingUI.textField2.getText(), GlobalSearchScope.projectScope(project))));
     }
 }

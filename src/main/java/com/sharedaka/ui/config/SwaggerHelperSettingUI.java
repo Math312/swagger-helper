@@ -11,47 +11,13 @@ import javax.swing.text.Document;
 
 public class SwaggerHelperSettingUI {
     public JPanel mainPanel;
-    private JTextField textField1;
-    private JTextField textField2;
+    JTextField textField1;
+    JTextField textField2;
     private Project project;
 
     public SwaggerHelperSettingUI(Project project) {
         this.project = project;
-        Document document = textField1.getDocument();
         initParam(project);
-        document.addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setInterestingExceptionStr(textField1.getText());
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setInterestingExceptionStr(textField1.getText());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setInterestingExceptionStr(textField1.getText());
-            }
-        });
-        Document springConfigName = textField2.getDocument();
-        springConfigName.addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setSpringRootConfigurationClassName(textField2.getText());
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setSpringRootConfigurationClassName(textField2.getText());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                SwaggerHelperApplicationManager.getInstance(project).getSwaggerHelperSetting().setSpringRootConfigurationClassName(textField2.getText());
-            }
-        });
     }
 
     public void initParam(Project project) {
