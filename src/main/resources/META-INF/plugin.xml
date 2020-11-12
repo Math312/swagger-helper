@@ -18,7 +18,7 @@
         <br />
 
         具体使用方法，请查看 <a href="https://github.com/Math312/swagger-helper">Github主页</a>]]></description>
-    <version>0.0.4</version>
+    <version>0.5.0</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->

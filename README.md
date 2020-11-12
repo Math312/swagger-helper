@@ -86,6 +86,6 @@
         
         如有多个Exception需要检测，请以`分号`分隔
         
-        注意，目前该功能还不支持Spring的Bean注入。该功能会在0.0.5版本支持。
+        然而，如果需要Spring容器支持，您需要配置您的SpringBoot项目启动类的全类名，以便Swagger-Helper分析Spring容器中的bean
         
         欢迎使用者提出Issue，完善该工具。
