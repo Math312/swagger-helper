@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>com.sharedaka.idea.swagger-helper</id>
     <name>swagger-helper</name>
-    <vendor email="yanlishao336@gmail">Sharedaka</vendor>
-
+    <vendor email="yanlishao336@gmail.com">Sharedaka</vendor>
+    <idea-version since-build="193"/>
     <description>
         <![CDATA[
         <strong>该插件提供功能如下：</strong><br />
