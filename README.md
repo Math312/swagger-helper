@@ -4,7 +4,7 @@
 1. 安装插件
 2. 选中类名或方法名 -> generate code(Command + N or alt + insert) -> generate swagger annotation 
 
-目前已知最低兼容版本为2019.1
+目前已知最低兼容版本为2019.3。5
 
 ## 注解支持
 
@@ -80,12 +80,12 @@
        throw new BusinessException(ErrorCode.SUCCESSFUL, 1.0);
        ```
        
-        对于抛出的Exception，可在Preferences-> Other settings ->Swagger-Helper配置项中进行配置。
+        对于抛出的Exception，可在Preferences-> Other settings ->Swagger-Helper -> interesting exception配置项中进行配置。
         
-        ![](./doc/images/config1.png)
+        ![](./doc/images/config.png)
         
         如有多个Exception需要检测，请以`分号`分隔
         
-        然而，如果需要Spring容器支持，您需要配置您的SpringBoot项目启动类的全类名，以便Swagger-Helper分析Spring容器中的bean
+        如果需要Spring容器支持，您需要在Preferences-> Other settings ->Swagger-Helper -> spring root class name配置项中配置您的SpringBoot项目启动类的全类名，以便Swagger-Helper分析Spring容器中的bean。
         
         欢迎使用者提出Issue，完善该工具。
