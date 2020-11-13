@@ -32,7 +32,5 @@ runIde {
     jvmArgs '-Xmx2G'
 }
 patchPluginXml {
-    changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+    pluginXmlFiles "plugin.xml"
 }
