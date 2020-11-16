@@ -40,7 +40,7 @@
         1. 添加Spring容器支持
         ]]>
     </change-notes>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
