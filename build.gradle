@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.sharedaka'
-version '0.5.0'
+version '0.5.1'
 
 repositories {
     mavenCentral()
@@ -33,4 +33,6 @@ runIde {
 }
 patchPluginXml {
     pluginXmlFiles "plugin.xml"
+    sinceBuild "193"
+    untilBuild "203.*"
 }
