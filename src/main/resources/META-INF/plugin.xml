@@ -2,7 +2,7 @@
     <id>com.sharedaka.idea.swagger-helper</id>
     <name>swagger-helper</name>
     <vendor email="yanlishao336@gmail.com">Yanli Shao</vendor>
-    <idea-version since-build="193" until-build="203.*"/>
+    <idea-version since-build="193"/>
     <description>
         <![CDATA[
         <strong> Swagger-Helper provide these features: </strong><br/>
@@ -40,7 +40,7 @@
         1. 添加Spring容器支持
         ]]>
     </change-notes>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
