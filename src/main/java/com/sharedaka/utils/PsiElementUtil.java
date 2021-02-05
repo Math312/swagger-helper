@@ -63,6 +63,28 @@ public class PsiElementUtil {
         return false;
     }
 
+    public static PsiClass getPsiCLass(PsiElement element) {
+        if (element instanceof PsiClass) {
+            return (PsiClass) element;
+        }
+        PsiElement psiClass = element.getParent();
+        while (psiClass != null && !(psiClass instanceof PsiClass)) {
+            psiClass = psiClass.getParent();
+        }
+        return (PsiClass) psiClass;
+    }
+
+    public static PsiMethod getPsiMethod(PsiElement element) {
+        if (element instanceof PsiMethod) {
+            return (PsiMethod) element;
+        }
+        PsiElement psiMethod = element.getParent();
+        while (psiMethod != null && !(psiMethod instanceof PsiMethod)) {
+            psiMethod = psiMethod.getParent();
+        }
+        return (PsiMethod) psiMethod;
+    }
+
     public static boolean isAbstractMethod(PsiMethod psiMethod) {
         return (psiMethod.getContainingClass() != null && psiMethod.getContainingClass().isInterface()) || psiMethod.getModifierList().hasModifierProperty(PsiModifier.ABSTRACT);
     }

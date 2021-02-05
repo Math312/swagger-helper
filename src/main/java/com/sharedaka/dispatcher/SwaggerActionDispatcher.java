@@ -11,7 +11,15 @@ import com.sharedaka.processor.ProcessorHolder;
 import com.sharedaka.processor.business.SwaggerApiControllerProcessor;
 import com.sharedaka.processor.business.SwaggerApiMethodProcessor;
 import com.sharedaka.processor.business.SwaggerApiModelProcessor;
+import com.sharedaka.utils.PsiElementUtil;
 
+/**
+ * Swagger-Helper由一个按钮作为统一入口
+ * 根据用户光标所在位置进行进行不同的处理
+ * 因此需要一个分发器进行功能判断
+ * 该类负责分发功能
+ *
+ * @author math312*/
 public class SwaggerActionDispatcher {
 
     public boolean support(AnActionEvent actionEvent) {
@@ -24,36 +32,20 @@ public class SwaggerActionDispatcher {
             if (editor != null) {
                 PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
                 if (psiFile instanceof PsiJavaFile) {
-                    String selectedText = editor.getSelectionModel().getSelectedText();
-                    for (PsiElement psiElement : psiFile.getChildren()) {
-                        if (psiElement instanceof PsiClass) {
-                            PsiClass psiClass = (PsiClass) psiElement;
-
-                            SwaggerApiModelProcessor swaggerApiModelProcessor = ProcessorHolder.getSwaggerApiModelProcessor();
-                            if (swaggerApiModelProcessor.support(psiClass)) {
-                                return true;
-                            }
-
-                            if (selectedText != null) {
-                                {
-                                    if (selectedText.equals(((PsiClass) psiElement).getName())) {
-                                        SwaggerApiControllerProcessor swaggerApiControllerProcessor = ProcessorHolder.getSwaggerApiControllerProcessor();
-                                        if (swaggerApiControllerProcessor.support(psiClass)) {
-                                            return true;
-                                        }
-                                    }
-                                }
-                            }
-                            PsiMethod[] psiMethods = ((PsiClass) psiElement).getMethods();
-                            for (PsiMethod psiMethod : psiMethods) {
-                                if (psiMethod.getName().equals(selectedText)) {
-                                    SwaggerApiMethodProcessor swaggerApiMethodProcessor = ProcessorHolder.getSwaggerApiMethodProcessor();
-                                    if (swaggerApiMethodProcessor.support(psiClass, psiMethod)) {
-                                        return true;
-                                    }
-                                }
-                            }
+                    int startOffset = editor.getSelectionModel().getSelectionStart();
+                    PsiElement selectedElement = PsiUtilBase.getElementAtOffset(psiFile, startOffset);
+                    if (selectedElement instanceof PsiClass) {
+                        PsiClass psiClass = (PsiClass) selectedElement;
+                        return ProcessorHolder.getSwaggerApiControllerProcessor().support(psiClass) || ProcessorHolder.getSwaggerApiModelProcessor().support(psiClass);
+                    }
+                    if (selectedElement instanceof PsiMethod || PsiElementUtil.getPsiMethod(selectedElement) != null) {
+                        PsiMethod psiMethod = null;
+                        if (selectedElement instanceof PsiMethod) {
+                            psiMethod = (PsiMethod) selectedElement;
+                        } else {
+                            psiMethod = PsiElementUtil.getPsiMethod(selectedElement);
                         }
+                        return ProcessorHolder.getSwaggerApiMethodProcessor().support(PsiElementUtil.getPsiCLass(psiMethod), psiMethod);
                     }
                 }
             }
@@ -76,46 +68,37 @@ public class SwaggerActionDispatcher {
     }
 
     private void doDispatcher(PsiFile psiFile, Editor editor) {
-        String selectedText = editor.getSelectionModel().getSelectedText();
-        for (PsiElement psiElement : psiFile.getChildren()) {
-            if (psiElement instanceof PsiClass) {
-                PsiClass psiClass = (PsiClass) psiElement;
-                WriteCommandAction.runWriteCommandAction(psiFile.getProject(), () -> {
-                            SwaggerApiModelProcessor swaggerApiModelProcessor = ProcessorHolder.getSwaggerApiModelProcessor();
-                            if (swaggerApiModelProcessor.support(psiClass)) {
-                                swaggerApiModelProcessor.process((PsiClass) psiElement);
-                            }
-                        }
-                );
-                if (selectedText != null) {
-                    {
-                        if (selectedText.equals(((PsiClass) psiElement).getName())) {
-                            WriteCommandAction.runWriteCommandAction(psiFile.getProject(), () -> {
-                                SwaggerApiControllerProcessor swaggerApiControllerProcessor = ProcessorHolder.getSwaggerApiControllerProcessor();
-                                if (swaggerApiControllerProcessor.support(psiClass)) {
-                                    swaggerApiControllerProcessor.process((PsiClass) psiElement);
-                                }
-                                SwaggerApiModelProcessor swaggerApiModelProcessor = ProcessorHolder.getSwaggerApiModelProcessor();
-                                if (swaggerApiModelProcessor.support(psiClass)) {
-                                    swaggerApiModelProcessor.process((PsiClass) psiElement);
-                                }
-                            });
-                        }
-                        PsiMethod[] psiMethods = ((PsiClass) psiElement).getMethods();
-                        for (PsiMethod psiMethod : psiMethods) {
-                            if (psiMethod.getName().equals(selectedText)) {
-                                WriteCommandAction.runWriteCommandAction(psiFile.getProject(), () -> {
-                                    SwaggerApiMethodProcessor swaggerApiMethodProcessor = ProcessorHolder.getSwaggerApiMethodProcessor();
-                                    if (swaggerApiMethodProcessor.support(psiClass, psiMethod)) {
-                                        swaggerApiMethodProcessor.process(psiMethod);
-                                    }
-                                });
-                            }
-                        }
-                    }
+        int startOffset = editor.getSelectionModel().getSelectionStart();
+        PsiElement selectedElement = PsiUtilBase.getElementAtOffset(psiFile, startOffset);
+        if (selectedElement instanceof PsiClass) {
+            PsiClass psiClass = (PsiClass) selectedElement;
+            WriteCommandAction.runWriteCommandAction(psiFile.getProject(), () -> {
+                SwaggerApiControllerProcessor swaggerApiControllerProcessor = ProcessorHolder.getSwaggerApiControllerProcessor();
+                if (swaggerApiControllerProcessor.support(psiClass)) {
+                    swaggerApiControllerProcessor.process(psiClass);
                 }
-            }
+                SwaggerApiModelProcessor swaggerApiModelProcessor = ProcessorHolder.getSwaggerApiModelProcessor();
+                if (swaggerApiModelProcessor.support(psiClass)) {
+                    swaggerApiModelProcessor.process(psiClass);
+                }
+            });
         }
-
+        if (selectedElement instanceof PsiMethod || PsiElementUtil.getPsiMethod(selectedElement) != null) {
+            PsiMethod psiMethod = null;
+            if (selectedElement instanceof PsiMethod) {
+                psiMethod = (PsiMethod) selectedElement;
+            } else {
+                psiMethod = PsiElementUtil.getPsiMethod(selectedElement);
+            }
+            PsiMethod finalPsiMethod = psiMethod;
+            WriteCommandAction.runWriteCommandAction(psiFile.getProject(), () -> {
+                SwaggerApiMethodProcessor swaggerApiMethodProcessor = ProcessorHolder.getSwaggerApiMethodProcessor();
+                if (swaggerApiMethodProcessor.support(PsiElementUtil.getPsiCLass(finalPsiMethod), finalPsiMethod)) {
+                    swaggerApiMethodProcessor.process(finalPsiMethod);
+                }
+            });
+        }
     }
+
 }
+

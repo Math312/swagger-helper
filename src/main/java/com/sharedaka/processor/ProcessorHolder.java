@@ -4,6 +4,16 @@ import com.sharedaka.processor.business.SwaggerApiControllerProcessor;
 import com.sharedaka.processor.business.SwaggerApiMethodProcessor;
 import com.sharedaka.processor.business.SwaggerApiModelProcessor;
 
+/**
+ * Swagger Helper现提供三个功能，其中两个与类相关，一个与方法相关，三个功能对应三个处理器
+ * 1. Class相关：
+ *     - 实体类生成@ApiModel相关注解   - SwaggerApiModelProcessor
+ *     - Controller类生成@Api相关注解 - SwaggerApiControllerProcessor
+ * 2. Method相关：
+ *     - 生成对应Controller注释       - SwaggerApiMethodProcessor
+ * 该类负责对处理器进行管理
+ *
+ * */
 public class ProcessorHolder {
 
     public static SwaggerApiControllerProcessor swaggerApiControllerProcessor;

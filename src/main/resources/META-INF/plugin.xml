@@ -2,11 +2,7 @@
     <id>com.sharedaka.idea.swagger-helper</id>
     <name>swagger-helper</name>
     <vendor email="yanlishao336@gmail.com">Yanli Shao</vendor>
-<<<<<<< HEAD
     <idea-version since-build="193"/>
-=======
-    <idea-version since-build="193" until-build="203.*"/>
->>>>>>> 0.5.0-add-notes
     <description>
         <![CDATA[
         <strong> Swagger-Helper provide these features: </strong><br/>
@@ -39,12 +35,12 @@
     </description>
     <change-notes>
         <![CDATA[
-        1. Add Analyzing Spring Context Support <br/>
+        1. Optimize method name selection operation, users can place the cursor (input cursor, not mouse cursor) anywhere in the method, and Swagger-Helper will identify the specific method <br/>
         <br/>
-        1. 添加Spring容器支持
+        1. 优化方法名选择操作，用户可以将光标（输入光标，非鼠标光标）放在方法的任意位置，Swagger-Helper会识别具体方法
         ]]>
     </change-notes>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->

@@ -16,17 +16,19 @@ import javax.swing.*;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/**
+ *  SwaggerHelper 配置
+ */
 public class SwaggerHelperSetting implements SearchableConfigurable {
 
     private SwaggerHelperSettingUI swaggerHelperSettingUI;
     private Project project;
 
+    /**
+     * 自动注入
+     * */
     public SwaggerHelperSetting(Project project) {
         this.project = project;
-    }
-
-    public static SwaggerHelperSetting getInstance(Project project) {
-        return project.getComponent(SwaggerHelperSetting.class);
     }
 
     @NotNull
@@ -41,6 +43,9 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
         return getId();
     }
 
+    /**
+     * 初始化界面
+     * */
     @Nullable
     @Override
     public JComponent createComponent() {
@@ -50,6 +55,9 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
         return this.swaggerHelperSettingUI.mainPanel;
     }
 
+    /**
+     * 判断配置是否修改
+     * */
     @Override
     public boolean isModified() {
         SwaggerHelperConfig config = SwaggerHelperConfig.getInstance(project);
@@ -59,6 +67,12 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
                 || checkSpringRootConfigurationClassName(springRootConfigurationClassName);
     }
 
+    /**
+     * 配置项：interestingException
+     * 用于表示感兴趣的异常
+     * 使用方式详见 README
+     * todo 在考虑优化
+     * */
     private boolean checkInterestingExceptions(String interestingExceptionStr) {
         if (interestingExceptionStr == null) {
             return true;
@@ -66,6 +80,10 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
         return !swaggerHelperSettingUI.textField1.getText().equals(interestingExceptionStr);
     }
 
+    /**
+     * Spring 根配置目录
+     * 解析错误码需要依赖Spring的Bean查找功能因此需要配置该项
+     * */
     private boolean checkSpringRootConfigurationClassName(String springRootConfigurationClassName) {
         if (springRootConfigurationClassName == null) {
             return true;
@@ -73,6 +91,9 @@ public class SwaggerHelperSetting implements SearchableConfigurable {
         return !swaggerHelperSettingUI.textField2.getText().equals(springRootConfigurationClassName);
     }
 
+    /**
+     * apply按钮逻辑
+     * */
     @Override
     public void apply() throws ConfigurationException {
         String[] exceptions = swaggerHelperSettingUI.textField1.getText().split(";");

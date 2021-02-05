@@ -3,8 +3,14 @@
 ## 使用方法
 1. 安装插件
 2. 选中类名或方法名 -> generate code(Command + N or alt + insert) -> generate swagger annotation 
-
-目前已知最低兼容版本为2019.3。5
+    
+    v0.5.2版本及以后，Swagger-Helper不再需要选中具体的方法名，您需要将光标放在方法的任何位置，Swagger-Helper都可以正确处理
+    - 方法名上：
+        ![](./doc/images/method-show.png)
+    - 方法体中：
+        ![](./doc/images/method-show2.png)
+    
+目前已知最低兼容版本为2019.3.5
 
 ## 注解支持
 
@@ -89,3 +95,22 @@
         如果需要Spring容器支持，您需要在Preferences-> Other settings ->Swagger-Helper -> spring root class name配置项中配置您的SpringBoot项目启动类的全类名，以便Swagger-Helper分析Spring容器中的bean。
         
         欢迎使用者提出Issue，完善该工具。
+        
+ # SwaggerHelper结构
+ 
+ ![](./doc/images/architecture-diagram.png)
+ 
+ Swagger-Helper由4部分组成：
+ 
+ 1. Dispatcher:分发器，由于Swagger-Helper的功能入口是一个快捷键可操作性的统一悬浮按钮（Command + N），但是Swagger-Helper支持3类功能，因此需要Dispatcher负责根据业务场景选择适当的Processor处理业务。
+ 2. Processor: 该部分负责进行详尽的业务功能处理
+       
+       - SwaggerApiControllerProcessor：负责处理Controller类的注解生成
+       - SwaggerApiMethodProcessor：负责处理RequestMapping修饰的方法的注解生成
+       - SwaggerApiModelProcessor： 负责处理Model类的注解生成
+       
+ 3. Parser: 由于SwaggerHelper需要对大量注解进行解析，Parser层负责对这些注解进行详细解析，对于ErrorCode的解析也由这部分处理
+ 4. Setting: Swagger-Helper的配置管理
+
+       
+        
