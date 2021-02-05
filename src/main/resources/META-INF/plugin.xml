@@ -55,6 +55,8 @@
                 serviceImplementation="com.sharedaka.config.SwaggerHelperConfig"/>
         <projectService
                 serviceImplementation="com.sharedaka.core.SwaggerHelperApplicationManager"/>
+        <toolWindow id="Swagger Helper" anchor="right"
+                    factoryClass="com.sharedaka.ui.sequence.SequenceToolWindowsFactory" canCloseContents="true"/>
     </extensions>
 
     <actions>
