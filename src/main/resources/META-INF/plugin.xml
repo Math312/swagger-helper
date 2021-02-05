@@ -1,0 +1,72 @@
+<idea-plugin>
+    <id>com.sharedaka.idea.swagger-helper</id>
+    <name>swagger-helper</name>
+    <vendor email="yanlishao336@gmail.com">Yanli Shao</vendor>
+<<<<<<< HEAD
+    <idea-version since-build="193"/>
+=======
+    <idea-version since-build="193" until-build="203.*"/>
+>>>>>>> 0.5.0-add-notes
+    <description>
+        <![CDATA[
+        <strong> Swagger-Helper provide these features: </strong><br/>
+        1. Generate the @ApiImplicitParams annotation for the interface coded by Spring MVC to describe request<br />
+        2. Generate the @ApiResponse annotation for the interface coded by Spring MVC to describe Response (Including state code and state message)<br />
+        3. Generate the @ApiModel\@ApiModelProperty annotation for the DTO to describe DTO's attributes<br />
+        <br />
+        <strong>Getting start</strong> <br />
+        <br />
+        1. Get the Generating code action's shortCut (Preferences -> KeyMap -> Search(Generate) -> Get the Keyboard shortcut(Such as command+N or alt+insert))<br />
+        2. Open the class file in Editor, select the method name or the class name<br />
+        3. Using the Generating code action's shortCut -> generate swagger annotation<br />
+        <br />
+
+        If you want to get more detail, please visit <a href="https://github.com/Math312/swagger-helper">the index of swagger-helper </a><br/>
+        <br/>
+        <strong>该插件提供功能如下：</strong><br />
+        1. 为接口自动生成Swagger @ApiImplicitParams @ApiOperation注解<br />
+        2. 分析代码结构，根据抛出异常自动生成 @ApiResponses注解<br />
+        3. 为DTO自动生成@ApiModel注解、@ApiModelProperty注解<br />
+        <br />
+        <strong>使用方法如下：</strong><br />
+        <br />
+        1. 通过Preferences->KeyMap->搜索Generate->查看Generate...的快捷键（通常为Command+N或者alt+insert）,即生成Getter、Setter方法的快捷键<br />
+        2. 在编辑界面打开要处理的类，选中需要处理的部分(可选部分：方法名、类名)<br />
+        3. 按动刚才拿到的快捷键，选中generate swagger annotation <br />
+        <br />
+
+        具体使用方法，请查看 <a href="https://github.com/Math312/swagger-helper">Github主页</a>]]>
+    </description>
+    <change-notes>
+        <![CDATA[
+        1. Add Analyzing Spring Context Support <br/>
+        <br/>
+        1. 添加Spring容器支持
+        ]]>
+    </change-notes>
+    <version>0.5.1</version>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.spring</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <projectConfigurable instance="com.sharedaka.ui.config.SwaggerHelperSetting"/>
+        <projectService
+                serviceImplementation="com.sharedaka.config.SwaggerHelperConfig"/>
+        <projectService
+                serviceImplementation="com.sharedaka.core.SwaggerHelperApplicationManager"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="com.sharedaka.action.SwaggerAnnotationGenerateAction"
+                class="com.sharedaka.action.SwaggerAnnotationGenerateAction" text="generate swagger annotation"
+                description="generate swagger annotation">
+            <add-to-group group-id="GenerateGroup" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>

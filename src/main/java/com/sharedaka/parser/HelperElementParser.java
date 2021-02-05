@@ -1,13 +1,16 @@
 package com.sharedaka.parser;
 
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.sharedaka.entity.ErrorCodes;
-import com.sharedaka.utils.BasicTypeUtil;
+import com.intellij.psi.util.MethodSignature;
+import com.intellij.spring.CommonSpringModel;
+import com.intellij.spring.model.SpringBeanPointer;
+import com.intellij.spring.model.SpringModelSearchParameters;
+import com.intellij.spring.model.utils.SpringModelSearchers;
+import com.sharedaka.core.SwaggerHelperApplicationManager;
 import com.sharedaka.utils.PsiElementUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 public class HelperElementParser extends JavaElementVisitor {
@@ -21,15 +24,42 @@ public class HelperElementParser extends JavaElementVisitor {
 
     @Override
     public void visitCallExpression(PsiCallExpression callExpression) {
-        if (!(PsiElementUtil.isComplexCall(callExpression) || PsiElementUtil.isPipeline(callExpression))) {
-            PsiMethod psiMethod = callExpression.resolveMethod();
-            if (psiMethod != null) {
+        PsiMethod psiMethod = callExpression.resolveMethod();
+        if (psiMethod != null) {
+            if (PsiElementUtil.isAbstractMethod(psiMethod)) {
+                PsiMethod resolvedMethod = findCallMethodInSpringContext(psiMethod);
+                if (resolvedMethod != null) {
+                    resolvedMethod.accept(this);
+                }
+            } else {
                 psiMethod.accept(this);
             }
-
         }
-        super.visitCallExpression(callExpression);
     }
+
+    public PsiMethod findCallMethodInSpringContext(PsiMethod psiMethod) {
+        PsiClass abstractClass = psiMethod.getContainingClass();
+        if (abstractClass != null) {
+            MethodSignature methodSignature = psiMethod.getSignature(PsiSubstitutor.EMPTY);
+            CommonSpringModel springModel = SwaggerHelperApplicationManager.getInstance(psiMethod.getProject()).getCommonSpringModel();
+            if (springModel != null) {
+                Collection<SpringBeanPointer> springBeanPointerList = SpringModelSearchers.findBeans(springModel, SpringModelSearchParameters.byClass(abstractClass));
+                if (springBeanPointerList.size() == 1) {
+                    for (SpringBeanPointer springBeanPointer : springBeanPointerList) {
+                        PsiClass psiClass = springBeanPointer.getBeanClass();
+                        PsiMethod[] psiMethods = psiClass.getMethods();
+                        for (PsiMethod methodImpl : psiMethods) {
+                            if (methodImpl.getHierarchicalMethodSignature().equals(methodSignature)) {
+                                return methodImpl;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public void visitClass(PsiClass aClass) {
