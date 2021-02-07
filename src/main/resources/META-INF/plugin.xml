@@ -56,7 +56,7 @@
         <projectService
                 serviceImplementation="com.sharedaka.core.SwaggerHelperApplicationManager"/>
         <toolWindow id="Swagger Helper" anchor="right"
-                    factoryClass="com.sharedaka.ui.sequence.SequenceToolWindowsFactory" canCloseContents="true"/>
+                    factoryClass="com.sharedaka.ui.requester.RequestToolWindowsFactory" canCloseContents="true"/>
     </extensions>
 
     <actions>
