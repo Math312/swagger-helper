@@ -4,12 +4,12 @@
 1. 安装插件
 2. 选中类名或方法名 -> generate code(Command + N or alt + insert) -> generate swagger annotation 
     
-    v0.5.2版本及以后，Swagger-Helper不再需要选中具体的方法名，您需要将光标放在方法的任何位置，Swagger-Helper都可以正确处理
+    v0.5.2.1版本及以后，Swagger-Helper不再需要选中具体的类名、方法名，您需要将光标放在方法的任何位置，Swagger-Helper都可以正确处理
     - 方法名上：
         ![](./doc/images/method-show.png)
     - 方法体中：
         ![](./doc/images/method-show2.png)
-    
+      
 目前已知最低兼容版本为2019.3.5
 
 ## 注解支持
