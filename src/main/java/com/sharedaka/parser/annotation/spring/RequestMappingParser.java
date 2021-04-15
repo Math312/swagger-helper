@@ -42,6 +42,8 @@ public class RequestMappingParser extends AbstractAnnotationParser {
         if (attributeMap.containsKey("method")) {
             String paths = StringUtil.removeSpace(attributeMap.get("method").getText());
             result.setMethod(parseMethodAttribute(paths));
+        } else {
+            result.setMethod(new String[]{"RequestMethod.GET"});
         }
         return result;
     }
