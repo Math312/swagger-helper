@@ -35,12 +35,12 @@
     </description>
     <change-notes>
         <![CDATA[
-        1. Optimize method name selection operation, users can place the cursor (input cursor, not mouse cursor) anywhere in the method, and Swagger-Helper will identify the specific method <br/>
+        1. fix bug - Choosing class name can't create correctly annotations   <br/>
         <br/>
-        1. 优化方法名选择操作，用户可以将光标（输入光标，非鼠标光标）放在方法的任意位置，Swagger-Helper会识别具体方法
+        1. 修复bug - 选定类名，无法正确生成注解问题
         ]]>
     </change-notes>
-    <version>0.5.2</version>
+    <version>0.5.2.1</version>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->

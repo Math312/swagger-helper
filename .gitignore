@@ -5,3 +5,5 @@ build
 *.iml
 *.jar
 out
+gradlew
+gradlew.bat
